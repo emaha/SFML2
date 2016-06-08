@@ -66,7 +66,7 @@ void Bullet::draw(RenderTarget &target)
 	
 	if (isAlive())
 	{
-		//target.draw(shape);
+		target.draw(shape);
 		target.draw(line, 2, Lines);
 	}
 }

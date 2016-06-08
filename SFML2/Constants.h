@@ -7,3 +7,4 @@
 
 enum Action
 {Move=0, Shot, MainMenu, Pause, TakeDamage, UseSkill, AllPlayers, AllBullets, Kill, SpawnPlayer, SpawnMonster};
+

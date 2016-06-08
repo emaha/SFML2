@@ -36,7 +36,10 @@ public:
 	int getPoolSize(){ return entityList.size(); }
 
 	int PLAYER_ID;
-
+	bool isServer = false;
+	
+	float getDistance(Vector2f a, Vector2f b);
+	
 	vector<Entity*> entityList;
 	vector<Enemy*> enemyList;
 

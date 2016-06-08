@@ -1,3 +1,4 @@
+#pragma once
 #include "NetworkServer.h"
 
 #include <string.h>
@@ -21,6 +22,7 @@ NetworkServer::NetworkServer()
 {
 	id = 0;
 	startSever();
+
 }
 
 
@@ -35,14 +37,14 @@ void NetworkServer::acceptLoop()
 	SocketSelector selector;
 	listener.listen(53000);
 	selector.add(listener);
-	listener.setBlocking(false);
+	//listener.setBlocking(false);
 	TcpSocket* socket;
 	cout << "init" << endl;
 
 	while (true)
 	{
-		cout << "while true" << endl;
-		if (selector.wait(milliseconds(100)))
+		//cout << "while true" << endl;
+		if (selector.wait(milliseconds(10)))
 		{
 			cout << "selector wait" << endl;
 			Lock lock(mutex);
@@ -70,7 +72,7 @@ void NetworkServer::recieveLoop(TcpSocket *socket)
 
 	while (true)
 	{
-		//sleep(milliseconds(1));
+		sleep(milliseconds(1));
 		//cout << "recieve loop" << endl;
 		sf::Packet packet;
 		Lock lock(mutex);
@@ -116,12 +118,16 @@ void NetworkServer::recieveLoop(TcpSocket *socket)
 		}
 
 		//mutex.unlock();
+
+		
 	}
 }
 
 void NetworkServer::startSever()
 {
 	cout << "Listening..." << endl;
+
+	ObjectManager::getInstance()->isServer = true;
 	
 	thread thread(&NetworkServer::acceptLoop, this);
 	thread.detach();
@@ -142,7 +148,7 @@ void NetworkServer::startSever()
 		}
 		
 		
-		//sleep(milliseconds(10));
+		sleep(milliseconds(20));
 	}
 }
 

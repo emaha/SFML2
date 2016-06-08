@@ -1,5 +1,5 @@
+#pragma once
 #include "NetworkClient.h"
-
 #include <iostream>
 #include "ObjectManager.h"
 #include "Player.h"
@@ -40,7 +40,7 @@ void NetworkClient::recievePacket()
 	//while (true)
 	//{
 		//cout << "while true" << endl;
-		if (selector.wait(milliseconds(1)))
+		if (selector.wait(milliseconds(10)))
 		{
 			//cout << "selector wait" << endl;
 			
@@ -102,12 +102,14 @@ void NetworkClient::recievePacket()
 void NetworkClient::sendPacket(Packet packet)
 {
 	socket->send(packet);
+	//cout << "Packet size: " << sizeof(packet) << endl;
 }
 
 
 void NetworkClient::doConnect()
 {
 	socket = new TcpSocket();
+	//socket->setBlocking(false);
 	//thread.launch();  //запускаем поток приема данных
 
 	Socket::Status status = socket->connect("172.16.8.48", 53000);

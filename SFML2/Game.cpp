@@ -56,7 +56,7 @@ void Game::run()
 		draw(window);
 
 		window.display();
-		
+		sleep(milliseconds(5));
 	}
 }
 

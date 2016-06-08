@@ -26,6 +26,7 @@ void ObjectManager::addBullet(int id, Vector2f position, Vector2f velocity)
 
 void ObjectManager::editEnemy(int id, Vector2f pos, Vector2f vel, Vector2f dir)
 {
+	// TODO: переделать это с использованием std::map
 	for (vector<Enemy*>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 	{
 		if ((*it)->id == id)
@@ -126,10 +127,17 @@ void ObjectManager::killEntity(int id)
 
 bool ObjectManager::isCollide(Sprite a, Sprite b)
 {
+	/*
 	if (a.getGlobalBounds().intersects(b.getGlobalBounds()))
+	{
+	return true;
+	}
+	*/
+	if (getDistance(a.getPosition(), b.getPosition()) < 150)
 	{
 		return true;
 	}
+		
 	return false;
 }
 
@@ -143,8 +151,11 @@ void ObjectManager::checkCollision()
 
 				if (isCollide((*enemy_it)->baseSprite, (*bullet_it)->sprite))
 				{
+					if (isServer)
+					{
+						(*enemy_it)->setDamage(30);
+					}
 					(*bullet_it)->kill();
-					(*enemy_it)->setDamage(30);
 					cout << (*bullet_it)->id << " ---> " << (*enemy_it)->id << endl;
 				}
 			}
@@ -156,4 +167,9 @@ void ObjectManager::checkCollision()
 void ObjectManager::reSpawnPlayer()
 {
 	
+}
+
+float ObjectManager::getDistance(Vector2f a, Vector2f b)
+{
+	return abs(sqrtf(pow((b.x - a.x), 2) - pow((b.y - a.x), 2)));
 }

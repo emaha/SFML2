@@ -9,9 +9,9 @@ Enemy::Enemy()
 
 void Enemy::setPostion(Vector2f pos)
 {
-	lerpPosition = pos;
+	//lerpPosition = pos;
 	//velocity = (lerpPosition - position);
-	//position = pos;
+	position = pos;
 }
 
 void Enemy::setDirection(Vector2f dir)
@@ -76,14 +76,15 @@ Enemy::~Enemy()
 {
 }
 
-float getDistance(Vector2f a, Vector2f b)
-{
-	return sqrtf(pow((b.x - a.x), 2) - pow((b.y - a.x), 2));
-}
-
 void Enemy::update(float time)
 {
-	velocity = (lerpPosition - position);
+	/*
+	Vector2f vector = lerpPosition - position;
+	float lenght = sqrt(vector.x * vector.x + vector.y * vector.y);
+	Vector2f normVelocity(vector.x / lenght, vector.y / lenght);
+
+	velocity = vector;
+
 	if (abs(getDistance(lerpPosition, position) < 30))
 	{
 		position = lerpPosition; 
@@ -92,7 +93,7 @@ void Enemy::update(float time)
 	{
 		position += velocity * time * 15.0f;  //moving...
 	}
-
+	*/
 	baseSprite.setPosition(position);
 	baseSprite.setRotation(direction.x);
 
