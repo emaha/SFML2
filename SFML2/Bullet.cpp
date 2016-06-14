@@ -26,7 +26,7 @@ Bullet::Bullet(int id, Vector2f position, Vector2f velocity)
 	shape.setRadius(3);
 	shape.setFillColor(Color::Green);
 	shape.setPosition(position);
-	speed = 3500.0f;
+	speed = 1000.0f;
 	
 	init();
 }
@@ -40,7 +40,7 @@ Bullet::~Bullet()
 
 void Bullet::init()
 {
-	lifeTime = 0.5f;
+	lifeTime = 5.5f;
 }
 
 void Bullet::update(float time)
@@ -49,7 +49,7 @@ void Bullet::update(float time)
 	{
 		position += velocity * time * speed;
 		line[0] = Vertex(position);
-		line[1] = Vertex(position + velocity*speed / 20.0f);
+		line[1] = Vertex(position + velocity*speed / 10.0f);
 
 		shape.setPosition(position);
 		sprite.setPosition(position);
@@ -67,6 +67,6 @@ void Bullet::draw(RenderTarget &target)
 	if (isAlive())
 	{
 		target.draw(shape);
-		target.draw(line, 2, Lines);
+		//target.draw(line, 2, Lines);
 	}
 }

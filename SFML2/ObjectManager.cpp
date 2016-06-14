@@ -7,26 +7,27 @@
 
 ObjectManager* ObjectManager::pInstance = 0;
 
+
+
 ObjectManager::ObjectManager(){}
 ObjectManager::~ObjectManager(){}
 
 void ObjectManager::addEnemy()
 {
-
-	enemyList.push_back(new Enemy());
-
+	//enemyList.push_back(new Enemy());
 }
 
 void ObjectManager::addBullet(int id, Vector2f position, Vector2f velocity)
 {
-
+	Lock lock(mutex);
 	entityList.push_back(new Bullet(id, position, velocity));
-
 }
 
 void ObjectManager::editEnemy(int id, Vector2f pos, Vector2f vel, Vector2f dir)
 {
 	// TODO: переделать это с использованием std::map
+	//Lock lock(mutex);
+	
 	for (vector<Enemy*>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 	{
 		if ((*it)->id == id)
@@ -39,31 +40,35 @@ void ObjectManager::editEnemy(int id, Vector2f pos, Vector2f vel, Vector2f dir)
 	}
 
 	enemyList.push_back(new Enemy(id, pos, dir));
+	
 }
 
 
 void ObjectManager::editEnemy(int id, Vector2f pos, Vector2f vel, Vector2f dir, float hp)
 {
-
-	for (vector<Enemy*>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+	//Lock lock(mutex);
+	if (id == PLAYER_ID)
 	{
-		
-		if (id == PLAYER_ID)
-		{
-			Player::getInstance()->health = hp;
-		}
-		if ((*it)->id == id)
-		{
-			(*it)->setPostion(pos);
-			(*it)->setVelocity(vel);
-			(*it)->setDirection(dir);
-			(*it)->setHealth(hp);
-			return;
-		}
+		Player::getInstance()->health = hp;
 	}
-
-	enemyList.push_back(new Enemy(id, pos, dir));
-
+	else
+	{
+		Lock lock(mutex);
+		for (vector<Enemy*>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+		{
+			if ((*it)->id == id)
+			{
+				(*it)->setPostion(pos);
+				(*it)->setVelocity(vel);
+				(*it)->setDirection(dir);
+				(*it)->setHealth(hp);
+				
+				return;
+			}
+		}
+		//Lock lock(mutex);
+		enemyList.push_back(new Enemy(id, pos, dir));
+	}
 }
 
 void ObjectManager::killAll()
@@ -74,7 +79,7 @@ void ObjectManager::killAll()
 void ObjectManager::update(float time)
 {
 	//cout << "Object Manager Update" << endl;
-
+	Lock lock(mutex);
 	for (vector<Entity*>::iterator it = entityList.begin(); it != entityList.end(); ++it)
 	{
 		if ((*it)->isAlive()){
@@ -96,14 +101,13 @@ void ObjectManager::update(float time)
 
 void ObjectManager::draw(RenderTarget &target)
 {
-
+	Lock lock(mutex);
 	for (vector<Entity*>::iterator it = entityList.begin(); it != entityList.end(); ++it)
 	{
 		if ((*it)->isAlive()){
 			(*it)->draw(target);
 		}
 	}
-
 	for (vector<Enemy*>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 	{
 		if ((*it)->id!=PLAYER_ID){
@@ -115,7 +119,7 @@ void ObjectManager::draw(RenderTarget &target)
 
 void ObjectManager::killEntity(int id)
 {
-
+	/*
 	for (vector<Entity*>::iterator it = entityList.begin(); it != entityList.end(); ++it)
 	{
 		if ((*it)->id == id)
@@ -123,6 +127,7 @@ void ObjectManager::killEntity(int id)
 			(*it)->kill();
 		}
 	}
+	*/
 }
 
 bool ObjectManager::isCollide(Sprite a, Sprite b)
@@ -132,17 +137,18 @@ bool ObjectManager::isCollide(Sprite a, Sprite b)
 	{
 	return true;
 	}
-	*/
+	
 	if (getDistance(a.getPosition(), b.getPosition()) < 150)
 	{
 		return true;
 	}
-		
+	*/	
 	return false;
 }
 
 void ObjectManager::checkCollision()
 {
+	/*
 	for (vector<Enemy*>::iterator enemy_it = enemyList.begin(); enemy_it != enemyList.end(); ++enemy_it)
 	{
 		for (vector<Entity*>::iterator bullet_it = entityList.begin(); bullet_it != entityList.end(); ++bullet_it)
@@ -153,7 +159,7 @@ void ObjectManager::checkCollision()
 				{
 					if (isServer)
 					{
-						(*enemy_it)->setDamage(30);
+						//(*enemy_it)->setDamage(30);
 					}
 					(*bullet_it)->kill();
 					cout << (*bullet_it)->id << " ---> " << (*enemy_it)->id << endl;
@@ -162,6 +168,7 @@ void ObjectManager::checkCollision()
 		}
 
 	}
+	*/
 }
 
 void ObjectManager::reSpawnPlayer()
@@ -171,5 +178,5 @@ void ObjectManager::reSpawnPlayer()
 
 float ObjectManager::getDistance(Vector2f a, Vector2f b)
 {
-	return abs(sqrtf(pow((b.x - a.x), 2) - pow((b.y - a.x), 2)));
+	return 0;// abs(sqrtf(pow((b.x - a.x), 2) - pow((b.y - a.x), 2)));
 }

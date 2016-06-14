@@ -22,7 +22,7 @@ public:
 
 private:
 	Mutex mutex;
-	Thread thread;
+	//Thread thread;
 	float sendTimer;
 
 };

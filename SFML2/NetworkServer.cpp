@@ -31,23 +31,51 @@ NetworkServer::~NetworkServer()
 }
 
 
+void NetworkServer::startSever()
+{
+	cout << "Listening..." << endl;
+
+	ObjectManager::getInstance()->isServer = true;
+
+	thread thread(&NetworkServer::acceptLoop, this);
+	thread.detach();
+
+	float time, lastTime;
+
+	while (true)
+	{
+		//cout << "main loop" << endl;
+		time = clock.getElapsedTime().asMilliseconds() / 1000.0f;
+
+		//if (time - lastTime >= (1.0f / 60.0f))
+		//{
+		//	clock.restart();
+
+		update(time);
+		//lastTime = clock.getElapsedTime().asMilliseconds()/1000.0f;
+		sleep(milliseconds(10));
+		//}
+		
+	}
+}
+
 void NetworkServer::acceptLoop()
 {
 	TcpListener listener;
-	SocketSelector selector;
+	//SocketSelector selector;
 	listener.listen(53000);
-	selector.add(listener);
+	//selector.add(listener);
 	//listener.setBlocking(false);
 	TcpSocket* socket;
-	cout << "init" << endl;
+	//cout << "init" << endl;
 
 	while (true)
 	{
 		//cout << "while true" << endl;
-		if (selector.wait(milliseconds(10)))
-		{
-			cout << "selector wait" << endl;
-			Lock lock(mutex);
+		//if (selector.wait())
+		//{
+			//cout << "selector wait" << endl;
+			//Lock lock(mutex);
 			//mutex.lock();
 			socket = new TcpSocket;
 			if (listener.accept(*socket) == sf::Socket::Done)
@@ -59,23 +87,23 @@ void NetworkServer::acceptLoop()
 				t.detach();
 			}
 			//mutex.unlock();
-		}
+		//}
 	}
 }
 
 void NetworkServer::recieveLoop(TcpSocket *socket)
 {
 	Packet packet;
-	srand(time(0));
+	srand(time(NULL));
 	packet << id++;
 	socket->send(packet);
 
 	while (true)
 	{
-		sleep(milliseconds(1));
+		sleep(milliseconds(10));
 		//cout << "recieve loop" << endl;
 		sf::Packet packet;
-		Lock lock(mutex);
+		//Lock lock(mutex);
 		//mutex.lock();
 		switch (socket->receive(packet))
 		{
@@ -91,14 +119,15 @@ void NetworkServer::recieveLoop(TcpSocket *socket)
 				packet >> id >> x >> y >> velx >> vely >> rx >> ry;
 				ObjectManager::getInstance()->editEnemy(id, Vector2f(x, y), Vector2f(velx, vely), Vector2f(rx, ry));
 				//cout << "MOVE id: " << id << endl;
+				//cout << "thread #" << id << endl;
 				break;
 			}
 			case Action::Shot: //Shot
 			{
-				cout << "SHOT" << endl;
+				//cout << "SHOT" << endl;
 				float x, y, velx, vely;
 				packet >> id >> x >> y >> velx >> vely;
-				ObjectManager::getInstance()->addBullet(id, Vector2f(x, y), Vector2f(velx, vely));
+				//ObjectManager::getInstance()->addBullet(id, Vector2f(x, y), Vector2f(velx, vely));
 				sendPacketToAll(packet);
 				break;
 			}
@@ -110,7 +139,8 @@ void NetworkServer::recieveLoop(TcpSocket *socket)
 		case sf::Socket::Disconnected:
 		{
 			socket->disconnect();
-			//cout << "Disconnected..." << clients.size() << endl;
+			cout << "Disconnected..." << clients.size() <<  endl;
+			delete(socket);
 			break;
 		}
 		default:
@@ -123,49 +153,27 @@ void NetworkServer::recieveLoop(TcpSocket *socket)
 	}
 }
 
-void NetworkServer::startSever()
-{
-	cout << "Listening..." << endl;
 
-	ObjectManager::getInstance()->isServer = true;
-	
-	thread thread(&NetworkServer::acceptLoop, this);
-	thread.detach();
-
-	float time = 0.0f, lastTime = 0.0f;
-	
-	while (true)
-	{
-		//cout << "main loop" << endl;
-		time = clock.getElapsedTime().asMilliseconds()/1000.0f;
-		
-		if (time - lastTime >= (1.0f / 60.0f))
-		{
-			clock.restart();
-			
-			update(time);
-			lastTime = clock.getElapsedTime().asMilliseconds()/1000.0f;
-		}
-		
-		
-		sleep(milliseconds(20));
-	}
-}
 
 
 void NetworkServer::update(float time)
 {
-	sendGameStateToAll(time);
+	//float t = clock.getElapsedTime().asMilliseconds();
+	//cout << "ServerUpdate\t";
+	//cout << clock.getElapsedTime().asMilliseconds() - t << endl;
 	ObjectManager::getInstance()->update(time);
+	sendGameStateToAll(time);
 }
 
 void NetworkServer::sendGameStateToAll(float time)
 {
-	if (sendtimer >= 0.02f)  
+
+	//cout << "sendtimer: " << sendtimer << endl;
+	if (time - sendtimer >= 0.1f)  
 	{
-		//cout << "sendGameStateToAll\n";
+		
 		//формируем пакет
-		Lock lock(mutex);
+		//Lock lock(mutex);
 		//mutex.lock();
 		Packet packet;
 		packet << Action::AllPlayers << ObjectManager::getInstance()->enemyList.size(); //список всех пользователей
@@ -179,22 +187,23 @@ void NetworkServer::sendGameStateToAll(float time)
 				   << (*it)->health;
 		}
 		sendPacketToAll(packet);
-
-		sendtimer = 0.0f;
+		//cout << "ok: " << id << endl;
+		sendtimer = time;
 		//mutex.unlock();
 	}
-
-	sendtimer += time;
 }
 
 void NetworkServer::sendPacketToAll(Packet packet)
 {
 	//mutex.lock();
-	Lock lock(mutex);
+	//Lock lock(mutex);
+	
 	for (std::list<sf::TcpSocket*>::iterator iter = clients.begin(); iter != clients.end(); ++iter)
 	{
 		sf::TcpSocket& clnt = **iter;
+		
 		clnt.send(packet);
+		//cout << "SendToAll" << endl;
 	}
 	//mutex.unlock();
 }

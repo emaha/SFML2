@@ -126,7 +126,7 @@ void Enemy::init()
 void Enemy::draw(RenderTarget &target)
 {
 	target.draw(baseShape);
-	target.draw(baseSprite);
+	//target.draw(baseSprite);
 	target.draw(towerShape);
 	target.draw(cannonShape);
 	target.draw(healthBar);

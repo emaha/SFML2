@@ -9,7 +9,7 @@ int main() {
 
 	cout << "1 - Client\n2 - Server\nChoose: ";
 
-	int a =1;
+	int a =2;
 	cin >> a;
 
 	switch (a)
