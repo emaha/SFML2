@@ -47,29 +47,28 @@ void ObjectManager::editEnemy(int id, Vector2f pos, Vector2f vel, Vector2f dir)
 void ObjectManager::editEnemy(int id, Vector2f pos, Vector2f vel, Vector2f dir, float hp)
 {
 	//Lock lock(mutex);
-	if (id == PLAYER_ID)
+
+	Lock lock(mutex);
+	for (vector<Enemy*>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
 	{
-		Player::getInstance()->health = hp;
-	}
-	else
-	{
-		Lock lock(mutex);
-		for (vector<Enemy*>::iterator it = enemyList.begin(); it != enemyList.end(); ++it)
+		if (id == PLAYER_ID)
 		{
-			if ((*it)->id == id)
-			{
-				(*it)->setPostion(pos);
-				(*it)->setVelocity(vel);
-				(*it)->setDirection(dir);
-				(*it)->setHealth(hp);
-				
-				return;
-			}
+			Player::getInstance()->health = hp;
 		}
-		//Lock lock(mutex);
-		enemyList.push_back(new Enemy(id, pos, dir));
+		if ((*it)->id == id)
+		{
+			(*it)->setPostion(pos);
+			(*it)->setVelocity(vel);
+			(*it)->setDirection(dir);
+			(*it)->setHealth(hp);
+
+			return;
+		}
 	}
+	//Lock lock(mutex);
+	enemyList.push_back(new Enemy(id, pos, dir));
 }
+
 
 void ObjectManager::killAll()
 {
@@ -130,45 +129,43 @@ void ObjectManager::killEntity(int id)
 	*/
 }
 
-bool ObjectManager::isCollide(Sprite a, Sprite b)
+bool ObjectManager::isCollide(Vector2f a, Vector2f b)
 {
-	/*
-	if (a.getGlobalBounds().intersects(b.getGlobalBounds()))
+	if (getDistance(a, b) < 35.0f)
 	{
-	return true;
-	}
-	
-	if (getDistance(a.getPosition(), b.getPosition()) < 150)
-	{
+		cout << a.x << ", " << a.y << " --- " << b.x << ", " << b.y << "\tDIST: " << getDistance(a, b) << endl;
 		return true;
 	}
-	*/	
+		
 	return false;
 }
 
 void ObjectManager::checkCollision()
 {
-	/*
+	//cout << "CheckCollisions" << endl;
 	for (vector<Enemy*>::iterator enemy_it = enemyList.begin(); enemy_it != enemyList.end(); ++enemy_it)
 	{
 		for (vector<Entity*>::iterator bullet_it = entityList.begin(); bullet_it != entityList.end(); ++bullet_it)
 		{
-			if ((*enemy_it)->isAlive() && (*bullet_it)->isAlive() && (*enemy_it)->id != (*bullet_it)->id){
+			//cout << "Testing: " << (*enemy_it)->id << " : " << (*bullet_it)->id << endl;
 
-				if (isCollide((*enemy_it)->baseSprite, (*bullet_it)->sprite))
+			if ((*enemy_it)->isAlive() && (*bullet_it)->isAlive() && (*enemy_it)->id != (*bullet_it)->id)
+			{
+				if (isCollide((*enemy_it)->position, (*bullet_it)->position))
 				{
 					if (isServer)
 					{
-						//(*enemy_it)->setDamage(30);
+						(*enemy_it)->setDamage(rand()%20+20);   // 20-40
 					}
 					(*bullet_it)->kill();
 					cout << (*bullet_it)->id << " ---> " << (*enemy_it)->id << endl;
 				}
+
 			}
 		}
 
 	}
-	*/
+	
 }
 
 void ObjectManager::reSpawnPlayer()
@@ -178,5 +175,5 @@ void ObjectManager::reSpawnPlayer()
 
 float ObjectManager::getDistance(Vector2f a, Vector2f b)
 {
-	return 0;// abs(sqrtf(pow((b.x - a.x), 2) - pow((b.y - a.x), 2)));
+	return sqrtf(pow((b.x - a.x), 2) + pow((b.y - a.y), 2));
 }

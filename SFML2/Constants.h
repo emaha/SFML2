@@ -6,5 +6,5 @@
 #define DEG2RAD 3.14159f / 180.0f
 
 enum Action
-{Move=0, Shot, MainMenu, Pause, TakeDamage, UseSkill, AllPlayers, AllBullets, Kill, SpawnPlayer, SpawnMonster};
+{Move=0, Shot, MainMenu, Pause, TakeDamage, UseSkill, AllPlayers, AllBullets, Kill, SpawnPlayer, SpawnMonster, SetID};
 

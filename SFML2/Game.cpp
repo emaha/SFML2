@@ -89,12 +89,11 @@ void Game::checkEvents(RenderWindow &window, float time)
 		}
 		case Event::KeyPressed:
 		{
-			if (Keyboard::isKeyPressed(Keyboard::Escape)) { window.close(); }
+			//if (Keyboard::isKeyPressed(Keyboard::Escape)) { window.close(); }
 			break;
 		}
 		case Event::KeyReleased:
 		{
-			//if (event.key.code == Keyboard::W || event.key.code == Keyboard::S) { Player::getInstance()->velocity = Vector2f(0, 0); }
 			break;
 		}
 		default:
@@ -147,7 +146,7 @@ void Game::checkEvents(RenderWindow &window, float time)
 		if (Keyboard::isKeyPressed(Keyboard::Space)){}
 	}
 
-	if (Mouse::isButtonPressed(Mouse::Right)) { ObjectManager::getInstance()->addEnemy(); }
+	//if (Mouse::isButtonPressed(Mouse::Right)) { ObjectManager::getInstance()->addEnemy(); }
 
 
 }

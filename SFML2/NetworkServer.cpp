@@ -40,21 +40,21 @@ void NetworkServer::startSever()
 	thread thread(&NetworkServer::acceptLoop, this);
 	thread.detach();
 
-	float time, lastTime;
+	float time, lastTime = 0.0f;
 
 	while (true)
 	{
 		//cout << "main loop" << endl;
 		time = clock.getElapsedTime().asMilliseconds() / 1000.0f;
+		//
 
-		//if (time - lastTime >= (1.0f / 60.0f))
-		//{
-		//	clock.restart();
-
-		update(time);
-		//lastTime = clock.getElapsedTime().asMilliseconds()/1000.0f;
-		sleep(milliseconds(10));
-		//}
+		if (time - lastTime >= (1.0f / 60.0f))
+		{
+			//cout << "Update: " << time-lastTime << endl;
+			update(time - lastTime);  //переделать
+			lastTime = clock.getElapsedTime().asMilliseconds()/1000.0f;
+			sleep(milliseconds(10));
+		}
 		
 	}
 }
@@ -95,7 +95,8 @@ void NetworkServer::recieveLoop(TcpSocket *socket)
 {
 	Packet packet;
 	srand(time(NULL));
-	packet << id++;
+	packet << Action::SetID << id++;
+	//cout << "New number created: " << id << endl;
 	socket->send(packet);
 
 	while (true)
@@ -127,7 +128,7 @@ void NetworkServer::recieveLoop(TcpSocket *socket)
 				//cout << "SHOT" << endl;
 				float x, y, velx, vely;
 				packet >> id >> x >> y >> velx >> vely;
-				//ObjectManager::getInstance()->addBullet(id, Vector2f(x, y), Vector2f(velx, vely));
+				ObjectManager::getInstance()->addBullet(id, Vector2f(x, y), Vector2f(velx, vely));
 				sendPacketToAll(packet);
 				break;
 			}
@@ -169,7 +170,7 @@ void NetworkServer::sendGameStateToAll(float time)
 {
 
 	//cout << "sendtimer: " << sendtimer << endl;
-	if (time - sendtimer >= 0.1f)  
+	if (sendtimer >= 0.1f)  
 	{
 		
 		//формируем пакет
@@ -188,9 +189,10 @@ void NetworkServer::sendGameStateToAll(float time)
 		}
 		sendPacketToAll(packet);
 		//cout << "ok: " << id << endl;
-		sendtimer = time;
+		sendtimer = 0;
 		//mutex.unlock();
 	}
+	sendtimer += time;
 }
 
 void NetworkServer::sendPacketToAll(Packet packet)

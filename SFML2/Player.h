@@ -21,6 +21,7 @@ public:
 
 	void Update(float time, Vector2i mousePos);
 	void Draw(RenderTarget &target);
+
 	bool isFire();
 	bool isAlive(){ return _isAlive; }
 

@@ -20,7 +20,7 @@ Player::Player()
 	damage = Vector2f(50, 100);
 	position = Vector2f(500, 500);
 	velocity = Vector2f(0, 0);
-	health = 100;
+	health = 1000;
 	shotTime = 0;
 	direction = Vector2f(0, 0);   //base, tower
 
@@ -48,28 +48,30 @@ Player::~Player()
 
 void Player::Update(float time, Vector2i mousePos)
 {
-	position += velocity;
+	if (isAlive())
+	{
+		position += velocity;
 
-	shotTime += time;
+		shotTime += time;
 
-	baseSprite.setPosition(position);
-	baseSprite.setRotation(direction.x);
+		baseSprite.setPosition(position);
+		baseSprite.setRotation(direction.x);
 
-	baseShape.setRotation(direction.x);
-	baseShape.setPosition(position);
+		baseShape.setRotation(direction.x);
+		baseShape.setPosition(position);
 
-	Vector2f deltaPosition;
-	deltaPosition = Vector2f(mousePos) - position;
-	direction.y = float((atan2(deltaPosition.y, deltaPosition.x)) *180/3.141592);
-	
-	towerShape.setRotation(direction.y);
-	towerShape.setPosition(position);
+		Vector2f deltaPosition;
+		deltaPosition = Vector2f(mousePos) - position;
+		direction.y = float((atan2(deltaPosition.y, deltaPosition.x)) * 180 / 3.141592);
 
-	cannonShape.setRotation(direction.y);
-	cannonShape.setPosition(position);
+		towerShape.setRotation(direction.y);
+		towerShape.setPosition(position);
+
+		cannonShape.setRotation(direction.y);
+		cannonShape.setPosition(position);
+	}
 
 	_isAlive = health > 0;
-
 }
 
 void Player::Draw(RenderTarget &target)
@@ -82,7 +84,7 @@ void Player::Draw(RenderTarget &target)
 
 bool Player::isFire()
 {
-	if (shotTime > 0.2f && isAlive()){
+	if (shotTime > 0.05f && isAlive()){
 		shotTime = 0;
 		return true;
 	}

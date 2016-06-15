@@ -132,12 +132,30 @@ void NetworkClient::doConnect()
 	}
 	//selector.add(*socket);
 
-	Packet packet;
-	int id;
-	socket->receive(packet);
-	packet >> id;
-	Player::getInstance()->id = id;
-	ObjectManager::getInstance()->PLAYER_ID = id;
+	bool isIdTaken = false;
+
+	while (!isIdTaken)
+	{
+		Packet packet;
+		int action, id;
+		socket->receive(packet);
+		packet >> action;
+		
+		switch (action)
+		{
+			case Action::SetID:
+			{
+				packet >> id;
+				Player::getInstance()->id = id;
+				ObjectManager::getInstance()->PLAYER_ID = id;
+				isIdTaken = true;
+				break;
+			}
+		}
+
+
+	}
+	
 
 	thread thread(&NetworkClient::recievePacket, this);
 	thread.detach();

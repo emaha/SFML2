@@ -19,6 +19,7 @@ public:
 	void setVelocity(Vector2f vel);
 	void setHealth(float hp);
 	void setDamage(int damage);
+	void respawn();
 
 	int id;
 	string name;
@@ -28,7 +29,7 @@ public:
 
 
 	Vector2f position, velocity, lerpPosition, baseSize, towerSize, cannonSize;
-	float health;
+	float health, respawnTimer;
 	Color color;
 	Vector2f damage;
 	RectangleShape baseShape, towerShape, cannonShape, healthBar;

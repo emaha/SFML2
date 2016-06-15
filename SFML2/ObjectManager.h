@@ -31,7 +31,7 @@ public:
 	void update(float time);
 	void draw(RenderTarget &target);
 	void checkCollision();
-	bool isCollide(Sprite a, Sprite b);
+	bool isCollide(Vector2f a, Vector2f b);
 
 	int getPoolSize(){ return entityList.size(); }
 

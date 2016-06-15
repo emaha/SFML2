@@ -10,7 +10,6 @@ Enemy::Enemy()
 void Enemy::setPostion(Vector2f pos)
 {
 	//lerpPosition = pos;
-	//velocity = (lerpPosition - position);
 	position = pos;
 }
 
@@ -26,7 +25,11 @@ void Enemy::setVelocity(Vector2f vel)
 
 void Enemy::setDamage(int damage)
 {
-	health -= damage;
+	//test buff
+	
+	float barSkin = 0.25f;
+
+	health -= damage * barSkin;
 }
 
 void Enemy::setHealth(float hp)
@@ -41,6 +44,8 @@ Enemy::Enemy(int id, Vector2f pos, Vector2f dir)
 	this->position = pos;
 
 	_isAlive = true;
+	respawnTimer = 3.0f;
+
 	position = Vector2f(100, 150);
 	velocity = Vector2f(0, 0);
 	
@@ -49,7 +54,7 @@ Enemy::Enemy(int id, Vector2f pos, Vector2f dir)
 	cannonSize = Vector2f(60, 5);
 
 	damage = Vector2f(50, 100);
-	health = 100;
+	health = 1000;
 	direction = dir;   //base, tower
 
 	baseTexture.loadFromFile("../Data/Images/tank.png", IntRect(0, 0, 50, 75));
@@ -76,46 +81,75 @@ Enemy::~Enemy()
 {
 }
 
+float getDistance(Vector2f a, Vector2f b)
+{
+	return abs(sqrtf(pow((b.x - a.x), 2) + pow((b.y - a.y), 2)));
+}
+
+
 void Enemy::update(float time)
 {
+	//velocity = (lerpPosition - position);
+
 	/*
 	Vector2f vector = lerpPosition - position;
 	float lenght = sqrt(vector.x * vector.x + vector.y * vector.y);
 	Vector2f normVelocity(vector.x / lenght, vector.y / lenght);
 
-	velocity = vector;
+	velocity = normVelocity;
 
-	if (abs(getDistance(lerpPosition, position) < 30))
+	if (getDistance(position,lerpPosition)<30)
 	{
-		position = lerpPosition; 
+		position = lerpPosition;
 	}
 	else
 	{
-		position += velocity * time * 15.0f;  //moving...
+		position += velocity * 2.0f;// *time * 1500.0f;  //moving...	
 	}
 	*/
-	baseSprite.setPosition(position);
-	baseSprite.setRotation(direction.x);
 
-	baseShape.setRotation(direction.x);
-	baseShape.setPosition(position);
+	if (isAlive())
+	{
 
-	towerShape.setRotation(direction.y);
-	towerShape.setPosition(position);
+		baseSprite.setPosition(position);
+		baseSprite.setRotation(direction.x);
 
-	cannonShape.setRotation(direction.y);
-	cannonShape.setPosition(position);
+		baseShape.setRotation(direction.x);
+		baseShape.setPosition(position);
 
-	healthBar.setPosition(position - Vector2f(50, 50));
-	healthBar.setSize(Vector2f(health <= 0 ? 0 : health, 10));	
+		towerShape.setRotation(direction.y);
+		towerShape.setPosition(position);
 
-	if (health < 70)
-		healthBar.setFillColor(Color::Yellow);
-	if (health < 35)
-		healthBar.setFillColor(Color::Red);
-	if (health <= 0)
-		kill();
+		cannonShape.setRotation(direction.y);
+		cannonShape.setPosition(position);
+
+		healthBar.setPosition(position - Vector2f(50, 50));
+		healthBar.setSize(Vector2f(health <= 0 ? 0 : health / 10, 10));
+
+		if (health < 70)
+			healthBar.setFillColor(Color::Yellow);
+		if (health < 35)
+			healthBar.setFillColor(Color::Red);
+		if (health <= 0)
+			kill();
+	}
+	else
+	{
+		if (respawnTimer-time<0.0f)
+		{
+			respawn();
+		}
+	}
+
+	_isAlive = health > 0.0f;
 }
+
+void Enemy::respawn()
+{
+	respawnTimer = 3.0f;
+	health = 100.0f;
+}
+
 
 void Enemy::init()
 {

@@ -20,7 +20,7 @@ Bullet::Bullet(int id, Vector2f position, Vector2f velocity)
 	_isAlive = true;
 
 	line[0] = Vertex(position);
-	line[1] = Vertex(position - velocity*20.0f);
+	line[1] = Vertex(position - velocity*5.0f);
 
 
 	shape.setRadius(3);
@@ -40,7 +40,7 @@ Bullet::~Bullet()
 
 void Bullet::init()
 {
-	lifeTime = 5.5f;
+	lifeTime = 2.5f;
 }
 
 void Bullet::update(float time)
@@ -49,13 +49,14 @@ void Bullet::update(float time)
 	{
 		position += velocity * time * speed;
 		line[0] = Vertex(position);
-		line[1] = Vertex(position + velocity*speed / 10.0f);
+		line[1] = Vertex(position + velocity*speed / 40.0f);
 
 		shape.setPosition(position);
 		sprite.setPosition(position);
 		if (lifeTime < 0.0f)
 		{
 			kill();
+			cout << "Bullet kill" << endl;
 		}
 		lifeTime -= time;
 	}
@@ -66,7 +67,7 @@ void Bullet::draw(RenderTarget &target)
 	
 	if (isAlive())
 	{
-		target.draw(shape);
-		//target.draw(line, 2, Lines);
+		//target.draw(shape);
+		target.draw(line, 2, Lines);
 	}
 }
