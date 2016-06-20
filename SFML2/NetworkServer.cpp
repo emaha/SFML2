@@ -48,7 +48,7 @@ void NetworkServer::startSever()
 
 		if (time - lastTime >= (1.0f / 60.0f))
 		{
-			update(time - lastTime);  //переделать
+			update(time - lastTime);  //переделать!!!!!!!!!!
 			lastTime = clock.getElapsedTime().asMilliseconds()/1000.0f;
 			sleep(milliseconds(10));
 		}
@@ -96,14 +96,14 @@ void NetworkServer::recieveLoop(TcpSocket *socket)
 			packet >> action;
 			switch (action)
 			{
-			case Action::Move: //Move
+			case Action::Move: 
 			{
 				float x, y, velx, vely, rx, ry;
 				packet >> id >> x >> y >> velx >> vely >> rx >> ry;
 				ObjectManager::getInstance()->editEnemy(id, Vector2f(x, y), Vector2f(velx, vely), Vector2f(rx, ry));
 				break;
 			}
-			case Action::Shot: //Shot
+			case Action::Shot: 
 			{
 				float x, y, velx, vely;
 				packet >> id >> x >> y >> velx >> vely;
@@ -111,6 +111,14 @@ void NetworkServer::recieveLoop(TcpSocket *socket)
 				sendPacketToAll(packet);
 				break;
 			}
+			case Action::UseSkill: //смысл такой же как и у Shot, мб стоит и объеденить
+			{
+				int skillNum;
+				packet >> id >> skillNum;
+				ObjectManager::getInstance()->enemyMap.find(id)->second->setDamage(-250);
+				break;
+			}
+
 			default:
 				break;
 			}
@@ -143,7 +151,7 @@ void NetworkServer::sendGameStateToAll(float time)
 	if (sendtimer >= 0.1f)  
 	{
 		Packet packet;
-		packet << Action::AllPlayers << ObjectManager::getInstance()->enemyMap.size();// enemyList.size(); //список всех пользователей
+		packet << Action::AllPlayers << ObjectManager::getInstance()->enemyMap.size(); //список всех пользователей
 		
 		for (map<int, Enemy*>::iterator it = ObjectManager::getInstance()->enemyMap.begin(); it != ObjectManager::getInstance()->enemyMap.end(); ++ it)
 		{
@@ -154,9 +162,9 @@ void NetworkServer::sendGameStateToAll(float time)
 				float x, y;
 				x = rand() % 1000;	y = rand() % 800;
 				Packet p;
-				//cout << "Sending: " << x << " " << y;
 				p << Action::SpawnPlayer << en->id <<  x << y;
 				sendPacketToAll(p);
+
 				en->state = Enemy::Alive;
 				en->_isAlive = true;
 			}
@@ -168,15 +176,6 @@ void NetworkServer::sendGameStateToAll(float time)
 
 		}
 
-		/*
-		for (vector<Enemy*>::iterator it = ObjectManager::getInstance()->enemyList.begin(); it != ObjectManager::getInstance()->enemyList.end(); ++it)
-		{
-			packet << (*it)->id << (*it)->position.x << (*it)->position.y
-				   << (*it)->velocity.x << (*it)->velocity.y 
-				   << (*it)->direction.x << (*it)->direction.y 
-				   << (*it)->health;
-		}
-		*/
 		sendPacketToAll(packet);
 		sendtimer = 0;
 	}

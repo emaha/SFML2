@@ -91,7 +91,9 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BattleText.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -104,8 +106,10 @@
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BattleText.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="Effect.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game.h" />

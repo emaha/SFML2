@@ -16,12 +16,17 @@ Player::Player()
 	cannonSize = Vector2f(60, 5);
 
 	_isAlive = true;
+
+	abilities[1] = 10.0f;
+	gCoolDown = 10.0f;
+
 	
 	damage = Vector2f(50, 100);
 	position = Vector2f(500, 500);
 	velocity = Vector2f(0, 0);
-	health = 1000;
-	shotTime = 0;
+	health = 1000.0f;
+	speed = 200.0f;
+	shotTime = 0.0f;
 	direction = Vector2f(0, 0);   //base, tower
 
 	baseTexture.loadFromFile("../Data/Images/tank.png", IntRect(0,0,50,75));
@@ -53,6 +58,12 @@ void Player::Update(float time, Vector2i mousePos)
 		position += velocity;
 
 		shotTime += time;
+		gCoolDown += time;
+		for (int i = 0; i < 3; i++)
+		{
+			abilities[i] += time;
+		}
+
 
 		baseSprite.setPosition(position);
 		baseSprite.setRotation(direction.x);
@@ -89,4 +100,20 @@ bool Player::isFire()
 		return true;
 	}
 	return false;
-};
+}
+
+bool Player::isSkillAvailable(int i)
+{
+	if (gCoolDown > 0.5f && isAlive() && abilities[i]>5.0f){
+		
+		abilities[i] = 0.0f;
+		gCoolDown = 0.0f;
+		return true;
+	}
+	return false;
+}
+
+void Player::useSkill(int skillNum)
+{
+	
+}

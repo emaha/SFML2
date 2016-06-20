@@ -23,7 +23,9 @@ public:
 	void Draw(RenderTarget &target);
 
 	bool isFire();
+	bool isSkillAvailable(int i);
 	bool isAlive(){ return _isAlive; }
+	void useSkill(int skillNum);
 
 
 	int id;
@@ -31,15 +33,16 @@ public:
 	Vector2f position, velocity, baseSize, towerSize, cannonSize;
 	bool _isAlive;
 
+	float abilities[3];
 
 	Sprite baseSprite;
 	Texture baseTexture;
 
-	float health;
+	float health, speed;
 	Color color;
 	Vector2f damage;
 	RectangleShape baseShape, towerShape, cannonShape;
-	float shotTime;
+	float shotTime, gCoolDown;
 	Vector2f direction;
 
 private:

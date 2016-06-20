@@ -89,7 +89,19 @@ void Game::checkEvents(RenderWindow &window, float time)
 		}
 		case Event::KeyPressed:
 		{
-			//if (Keyboard::isKeyPressed(Keyboard::Escape)) { window.close(); }
+			if (Keyboard::isKeyPressed(Keyboard::E)) { cout << "E is pressed" << endl; }
+
+			if (Keyboard::isKeyPressed(Keyboard::Q))
+			{
+				if (Player::getInstance()->isSkillAvailable(1))
+				{
+					Packet packet;
+					packet << Action::UseSkill << Player::getInstance()->id << Skill::ArmorLow;
+					networkClient->sendPacket(packet);
+					cout << "Skill 1 used" << endl;
+				}
+			}
+
 			break;
 		}
 		case Event::KeyReleased:
@@ -127,11 +139,11 @@ void Game::checkEvents(RenderWindow &window, float time)
 				networkClient->sendPacket(packet);
 			}
 		}
-		if (Keyboard::isKeyPressed(Keyboard::W)) { Player::getInstance()->position.y -= 200.0f * time; }
-		if (Keyboard::isKeyPressed(Keyboard::S)) { Player::getInstance()->position.y += 200.0f * time; }
-		if (Keyboard::isKeyPressed(Keyboard::A)) { Player::getInstance()->position.x -= 200.0f * time; }
-		if (Keyboard::isKeyPressed(Keyboard::D)) { Player::getInstance()->position.x += 200.0f * time; }
-
+		if (Keyboard::isKeyPressed(Keyboard::W)) { Player::getInstance()->position.y -= Player::getInstance()->speed * time; }
+		if (Keyboard::isKeyPressed(Keyboard::S)) { Player::getInstance()->position.y += Player::getInstance()->speed * time; }
+		if (Keyboard::isKeyPressed(Keyboard::A)) { Player::getInstance()->position.x -= Player::getInstance()->speed * time; }
+		if (Keyboard::isKeyPressed(Keyboard::D)) { Player::getInstance()->position.x += Player::getInstance()->speed * time; }
+		
 		/*
 		if (Keyboard::isKeyPressed(Keyboard::A)) { Player::getInstance()->direction.x -= 100.0f * time; }
 		if (Keyboard::isKeyPressed(Keyboard::D)) { Player::getInstance()->direction.x += 100.0f * time; }
@@ -152,8 +164,4 @@ void Game::checkEvents(RenderWindow &window, float time)
 	{
 		if (Keyboard::isKeyPressed(Keyboard::Space)){}
 	}
-
-	//if (Mouse::isButtonPressed(Mouse::Right)) { ObjectManager::getInstance()->addEnemy(); }
-
-
 }

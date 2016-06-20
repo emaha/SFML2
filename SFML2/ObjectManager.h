@@ -23,6 +23,8 @@ public:
 	void editEnemy(int id, Vector2f pos, Vector2f vel, Vector2f dir, float hp);
 	void editEnemy(int id, Vector2f pos, Vector2f vel, Vector2f dir);
 
+	void useSkill(int id, int skillNum);
+
 	void reSpawnPlayer();
 	void update(float time);
 	void draw(RenderTarget &target);

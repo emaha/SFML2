@@ -23,7 +23,7 @@ public:
 
 	int id;
 	string name;
-	
+
 	Sprite baseSprite;
 	Texture baseTexture;
 

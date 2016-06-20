@@ -25,10 +25,7 @@ void Enemy::setVelocity(Vector2f vel)
 
 void Enemy::setDamage(int damage)
 {
-	//test buff
-	float barSkin = 1.0f;
-
-	health -= damage * barSkin;
+	health -= damage;
 }
 
 void Enemy::setHealth(float hp)
@@ -94,9 +91,6 @@ Vector2f Lerp(Vector2f v0, Vector2f v1, float t)
 
 void Enemy::update(float time)
 {
-	//velocity = (lerpPosition - position);
-
-	
 	Vector2f vector = lerpPosition - position;
 	float lenght = sqrt(vector.x * vector.x + vector.y * vector.y);
 	Vector2f normVelocity(vector.x / lenght, vector.y / lenght);

@@ -12,6 +12,7 @@ ObjectManager* ObjectManager::pInstance = 0;
 ObjectManager::ObjectManager(){}
 ObjectManager::~ObjectManager(){}
 
+//Стреляем не создавая лишних объектов
 void ObjectManager::addBullet(int id, Vector2f position, Vector2f velocity)
 {
 	Lock lock(mutex);
@@ -25,9 +26,9 @@ void ObjectManager::addBullet(int id, Vector2f position, Vector2f velocity)
 	}
 	
 	bulletList.push_back(new Bullet(id, position, velocity));
-	cout << "bulletList size: " << bulletList.size() << endl;
 }
 
+//обновление данных о игроке для сервера
 void ObjectManager::editEnemy(int id, Vector2f pos, Vector2f vel, Vector2f dir)
 {
 	Lock lock(mutex);
@@ -46,7 +47,7 @@ void ObjectManager::editEnemy(int id, Vector2f pos, Vector2f vel, Vector2f dir)
 	}
 }
 
-
+//обновление данных о игроке для клиента
 void ObjectManager::editEnemy(int id, Vector2f pos, Vector2f vel, Vector2f dir, float hp)
 {
 	Lock lock(mutex);
@@ -72,9 +73,15 @@ void ObjectManager::editEnemy(int id, Vector2f pos, Vector2f vel, Vector2f dir, 
 	}
 }
 
+void ObjectManager::useSkill(int id, int skillNum)
+{
+		
+}
+
 void ObjectManager::update(float time)
 {
 	Lock lock(mutex);
+
 	for (vector<Bullet*>::iterator it = bulletList.begin(); it != bulletList.end(); ++it)
 	{
 		if ((*it)->isAlive()){
@@ -125,7 +132,6 @@ bool ObjectManager::isCollide(Vector2f a, Vector2f b)
 {
 	if (getDistance(a, b) < 35.0f)
 	{
-		//cout << a.x << ", " << a.y << " --- " << b.x << ", " << b.y << "\tDIST: " << getDistance(a, b) << endl;
 		return true;
 	}
 		
@@ -134,6 +140,7 @@ bool ObjectManager::isCollide(Vector2f a, Vector2f b)
 
 void ObjectManager::checkCollision()
 {
+	//Столкновения игрока с пулей
 	for (map<int, Enemy*>::iterator enemy_it = enemyMap.begin(); enemy_it != enemyMap.end(); ++ enemy_it)
 	{
 		for (vector<Bullet*>::iterator bullet_it = bulletList.begin(); bullet_it != bulletList.end(); ++bullet_it)
@@ -147,13 +154,14 @@ void ObjectManager::checkCollision()
 						enemy_it->second->setDamage(rand() % 20 + 20);   // 20-40
 					}
 					(*bullet_it)->kill();
-					//cout << (*bullet_it)->id << " ---> " << enemy_it->second->id << endl;
 				}
-
 			}
 		}
-
 	}
+
+
+
+
 	
 }
 
