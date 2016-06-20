@@ -9,7 +9,7 @@ public:
 	Bullet(int id, Vector2f position, Vector2f velocity);
 	~Bullet();
 
-	void init();
+	void init(int id, Vector2f position, Vector2f velocity);
 	void update(float time);
 	void draw(RenderTarget &target);
 

@@ -9,8 +9,8 @@ Enemy::Enemy()
 
 void Enemy::setPostion(Vector2f pos)
 {
-	//lerpPosition = pos;
-	position = pos;
+	lerpPosition = pos;
+	//position = pos;
 }
 
 void Enemy::setDirection(Vector2f dir)
@@ -26,8 +26,7 @@ void Enemy::setVelocity(Vector2f vel)
 void Enemy::setDamage(int damage)
 {
 	//test buff
-	
-	float barSkin = 0.25f;
+	float barSkin = 1.0f;
 
 	health -= damage * barSkin;
 }
@@ -45,11 +44,12 @@ Enemy::Enemy(int id, Vector2f pos, Vector2f dir)
 
 	_isAlive = true;
 	respawnTimer = 3.0f;
+	state = Alive;
 
 	position = Vector2f(100, 150);
 	velocity = Vector2f(0, 0);
 	
-	baseSize = Vector2f(40, 60);
+	baseSize = Vector2f(60, 60);
 	towerSize = Vector2f(50, 30);
 	cannonSize = Vector2f(60, 5);
 
@@ -87,26 +87,23 @@ float getDistance(Vector2f a, Vector2f b)
 }
 
 
+Vector2f Lerp(Vector2f v0, Vector2f v1, float t)
+{
+	return (1 - t)*v0 + t*v1;
+}
+
 void Enemy::update(float time)
 {
 	//velocity = (lerpPosition - position);
 
-	/*
+	
 	Vector2f vector = lerpPosition - position;
 	float lenght = sqrt(vector.x * vector.x + vector.y * vector.y);
 	Vector2f normVelocity(vector.x / lenght, vector.y / lenght);
 
-	velocity = normVelocity;
-
-	if (getDistance(position,lerpPosition)<30)
-	{
-		position = lerpPosition;
-	}
-	else
-	{
-		position += velocity * 2.0f;// *time * 1500.0f;  //moving...	
-	}
-	*/
+	position = Lerp(position, lerpPosition, 0.15f);
+	
+	_isAlive = health > 0.0f;
 
 	if (isAlive())
 	{
@@ -126,12 +123,16 @@ void Enemy::update(float time)
 		healthBar.setPosition(position - Vector2f(50, 50));
 		healthBar.setSize(Vector2f(health <= 0 ? 0 : health / 10, 10));
 
-		if (health < 70)
+		if (health >=700)
+			healthBar.setFillColor(Color::Green);
+		if (health < 700)
 			healthBar.setFillColor(Color::Yellow);
-		if (health < 35)
+		if (health < 350)
 			healthBar.setFillColor(Color::Red);
 		if (health <= 0)
-			kill();
+		{
+			
+		}
 	}
 	else
 	{
@@ -141,13 +142,16 @@ void Enemy::update(float time)
 		}
 	}
 
-	_isAlive = health > 0.0f;
+	
 }
 
 void Enemy::respawn()
 {
+	//cout << id << " " << "respawn" << endl;
 	respawnTimer = 3.0f;
-	health = 100.0f;
+	health = 1000.0f;
+	state = Spawn;
+	_isAlive = true;
 }
 
 

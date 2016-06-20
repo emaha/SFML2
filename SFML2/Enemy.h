@@ -27,6 +27,7 @@ public:
 	Sprite baseSprite;
 	Texture baseTexture;
 
+	enum{ Alive, Dead, Spawn } state;
 
 	Vector2f position, velocity, lerpPosition, baseSize, towerSize, cannonSize;
 	float health, respawnTimer;

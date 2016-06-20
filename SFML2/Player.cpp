@@ -11,7 +11,7 @@ Player::Player()
 {
 	name = "CrossVoid";
 
-	baseSize = Vector2f(40, 60);
+	baseSize = Vector2f(60, 60);
 	towerSize = Vector2f(50, 30);
 	cannonSize = Vector2f(60, 5);
 
@@ -84,9 +84,9 @@ void Player::Draw(RenderTarget &target)
 
 bool Player::isFire()
 {
-	if (shotTime > 0.05f && isAlive()){
+	if (shotTime > 0.1f && isAlive()){
 		shotTime = 0;
 		return true;
 	}
 	return false;
-}
+};

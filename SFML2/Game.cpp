@@ -127,6 +127,12 @@ void Game::checkEvents(RenderWindow &window, float time)
 				networkClient->sendPacket(packet);
 			}
 		}
+		if (Keyboard::isKeyPressed(Keyboard::W)) { Player::getInstance()->position.y -= 200.0f * time; }
+		if (Keyboard::isKeyPressed(Keyboard::S)) { Player::getInstance()->position.y += 200.0f * time; }
+		if (Keyboard::isKeyPressed(Keyboard::A)) { Player::getInstance()->position.x -= 200.0f * time; }
+		if (Keyboard::isKeyPressed(Keyboard::D)) { Player::getInstance()->position.x += 200.0f * time; }
+
+		/*
 		if (Keyboard::isKeyPressed(Keyboard::A)) { Player::getInstance()->direction.x -= 100.0f * time; }
 		if (Keyboard::isKeyPressed(Keyboard::D)) { Player::getInstance()->direction.x += 100.0f * time; }
 		if (Keyboard::isKeyPressed(Keyboard::W))
@@ -140,6 +146,7 @@ void Game::checkEvents(RenderWindow &window, float time)
 			Vector2f forwardVector(sin(Player::getInstance()->direction.x * DEG2RAD), -cos(Player::getInstance()->direction.x * DEG2RAD));
 			Player::getInstance()->position -= forwardVector * 200.0f * time;
 		}
+		*/
 	} 
 	else
 	{

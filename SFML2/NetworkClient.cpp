@@ -9,7 +9,7 @@
 using namespace std;
 using namespace sf;
 
-NetworkClient::NetworkClient()//  : thread(&NetworkClient::recievePacket, this)
+NetworkClient::NetworkClient()
 {
 }
 
@@ -20,9 +20,6 @@ NetworkClient::~NetworkClient()
 
 void NetworkClient::update(float time)
 {
-	//cout << "Network update" << endl;
-	//recievePacket();
-	
 	sendTimer += time;
 
 	if (sendTimer > 0.05f)
@@ -39,23 +36,10 @@ void NetworkClient::recievePacket()
 {
 	while (true)
 	{
-		//cout << "while true recieve" << endl;
-		//if (selector.wait(milliseconds(10)))
-		//{
-			//cout << "selector wait" << endl;
-			
-			//if (selector.isReady(*socket))
-			//{
-				
-		
-
 				int action, id;
 				float  x, y, velx, vely, rotx, roty, hp;
 				Packet packet;
-				
-				//socket->receive(packet);
-				//
-				//Lock lock(mutex);
+
 				switch (socket->receive(packet))
 				{
 				case sf::Socket::Done:
@@ -67,34 +51,34 @@ void NetworkClient::recievePacket()
 					case Action::Move: //move
 					{
 						packet >> id >> x >> y >> velx >> vely >> rotx >> roty;
-						//cout << "RECIEVE: " << action <<  "\t" << id << endl;
 						ObjectManager::getInstance()->editEnemy(id, Vector2f(x, y), Vector2f(velx, vely), Vector2f(rotx, roty));
 						break;
 					}
 					case Action::Shot: //Shot
 					{
-						//cout << "SHOT" << endl;
 						packet >> id >> x >> y >> velx >> vely;
 						
 						ObjectManager::getInstance()->addBullet(id, Vector2f(x, y), Vector2f(velx, vely));
 						break;
 					}
-					case Action::Kill:
+					case Action::SpawnPlayer:
 					{
-						packet >> id >> x >> y >> velx >> vely;
-						ObjectManager::getInstance()->killEntity(id);
+						packet >> id >> x >> y;
+						//cout << "I was spawned at " << x << " " << y << endl;
+						if (id == ObjectManager::getInstance()->PLAYER_ID)
+						{
+							Player::getInstance()->position = Vector2f(x, y);
+							//cout << x << " " << y << endl;
+						}
 						break;
 					}
 					case Action::AllPlayers://список всех клиентов
 					{
-						//cout << "allPlayers" << endl;
-						
 						int size;
 						packet >> size;
 						for (int i = 0; i < size; ++i)
 						{
 							packet >> id >> x >> y >> velx >> vely >> rotx >> roty >> hp;
-							//cout << x << '\t' << y << endl;
 							ObjectManager::getInstance()->editEnemy(id, Vector2f(x, y), Vector2f(velx, vely), Vector2f(rotx, roty), hp);
 						}
 						
@@ -106,9 +90,6 @@ void NetworkClient::recievePacket()
 					
 				}
 				}
-			//}
-			
-		//}
 	}
 }
 
@@ -116,22 +97,18 @@ void NetworkClient::sendPacket(Packet packet)
 {
 	Lock lock(mutex);
 	socket->send(packet);
-	//cout << "Packet size: " << sizeof(packet) << endl;
 }
 
 
 void NetworkClient::doConnect()
 {
 	socket = new TcpSocket();
-	//socket->setBlocking(false);
-	
+
 	Socket::Status status = socket->connect("172.16.8.48", 53000);
 	if (status != Socket::Done)
 	{
 		cout << "ERROR\n";
 	}
-	//selector.add(*socket);
-
 	bool isIdTaken = false;
 
 	while (!isIdTaken)
@@ -152,11 +129,8 @@ void NetworkClient::doConnect()
 				break;
 			}
 		}
-
-
 	}
 	
-
 	thread thread(&NetworkClient::recievePacket, this);
 	thread.detach();
 }

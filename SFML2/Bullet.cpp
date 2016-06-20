@@ -11,6 +11,18 @@ Bullet::Bullet()
 
 Bullet::Bullet(int id, Vector2f position, Vector2f velocity) 
 {
+	init(id, position, velocity);
+}
+
+
+Bullet::~Bullet()
+{
+
+}
+
+
+void Bullet::init(int id, Vector2f position, Vector2f velocity)
+{
 	this->position = position;
 	this->velocity = velocity;
 	this->id = id;
@@ -26,21 +38,9 @@ Bullet::Bullet(int id, Vector2f position, Vector2f velocity)
 	shape.setRadius(3);
 	shape.setFillColor(Color::Green);
 	shape.setPosition(position);
-	speed = 1000.0f;
-	
-	init();
-}
+	speed = 2000.0f;
 
-
-Bullet::~Bullet()
-{
-
-}
-
-
-void Bullet::init()
-{
-	lifeTime = 2.5f;
+	lifeTime = 1.5f;
 }
 
 void Bullet::update(float time)
@@ -49,14 +49,14 @@ void Bullet::update(float time)
 	{
 		position += velocity * time * speed;
 		line[0] = Vertex(position);
-		line[1] = Vertex(position + velocity*speed / 40.0f);
+		line[1] = Vertex(position + velocity*speed / 20.0f);
 
 		shape.setPosition(position);
 		sprite.setPosition(position);
 		if (lifeTime < 0.0f)
 		{
 			kill();
-			cout << "Bullet kill" << endl;
+			//cout << "Bullet kill" << endl;
 		}
 		lifeTime -= time;
 	}
