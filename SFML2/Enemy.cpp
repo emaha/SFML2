@@ -127,6 +127,10 @@ void Enemy::update(float time)
 		{
 			
 		}
+
+		updateBuff(time);
+
+
 	}
 	else
 	{
@@ -138,6 +142,28 @@ void Enemy::update(float time)
 
 	
 }
+
+void Enemy::updateBuff(float time)
+{
+	for (vector<Buff*>::iterator it = buffList.begin(); it != buffList.end(); ++it)
+	{
+		if ((*it)->isActive)
+		{
+			(*it)->update(time);
+			if((*it)->isReady())
+			{
+				health += (*it)->amount;
+			}
+		}
+		else
+		{
+			delete *it;
+			if (buffList.size()>1)
+			it = buffList.erase(it);
+		}
+	}
+}
+
 
 void Enemy::respawn()
 {
@@ -164,3 +190,7 @@ void Enemy::draw(RenderTarget &target)
 	target.draw(healthBar);
 }
 
+void Enemy::addBuff(BuffType buffType)
+{
+	buffList.push_back(new Buff(buffType, 5.0f, 10.0f));
+}

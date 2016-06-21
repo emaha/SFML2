@@ -48,10 +48,10 @@
     <ClCompile Include="NetworkServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Effect.cpp">
+    <ClCompile Include="BattleText.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BattleText.cpp">
+    <ClCompile Include="Buff.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -89,10 +89,10 @@
     <ClInclude Include="NetworkServer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Effect.h">
+    <ClInclude Include="BattleText.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BattleText.h">
+    <ClInclude Include="Buff.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

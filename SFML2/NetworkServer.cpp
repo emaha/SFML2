@@ -115,7 +115,16 @@ void NetworkServer::recieveLoop(TcpSocket *socket)
 			{
 				int skillNum;
 				packet >> id >> skillNum;
-				ObjectManager::getInstance()->enemyMap.find(id)->second->setDamage(-250);
+				switch (skillNum)
+				{
+				case Skill::ArmorLow:
+				{
+					ObjectManager::getInstance()->enemyMap.find(id)->second->addBuff(BuffType::Health);
+					break;
+				}
+				}
+
+				
 				break;
 			}
 

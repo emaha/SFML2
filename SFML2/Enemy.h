@@ -1,5 +1,7 @@
 #pragma once
 #include "Entity.h"
+#include "Buff.h"
+#include "Constants.h"
 #include <string>
 
 using namespace std;
@@ -20,12 +22,17 @@ public:
 	void setHealth(float hp);
 	void setDamage(int damage);
 	void respawn();
+	void updateBuff(float time);
+
+	void addBuff(BuffType buffType);
 
 	int id;
 	string name;
 
 	Sprite baseSprite;
 	Texture baseTexture;
+
+	vector<Buff*> buffList;
 
 	enum{ Alive, Dead, Spawn } state;
 

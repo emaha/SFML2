@@ -11,5 +11,7 @@ enum Action
 enum Skill
 {ArmorLow=0, ArmorMiddle, ArmorHigh};
 
-enum Effect
-{DOT=0};
+enum BuffType
+{
+	Armor = 0, Health, Speed, Damage, FireRate
+};
