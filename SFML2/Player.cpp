@@ -51,6 +51,11 @@ Player::~Player()
 {
 }
 
+Vector2f LerpPLayer(Vector2f v0, Vector2f v1, float t)
+{
+	return (1 - t)*v0 + t*v1;
+}
+
 void Player::Update(float time, Vector2i mousePos)
 {
 	if (isAlive())
@@ -64,22 +69,24 @@ void Player::Update(float time, Vector2i mousePos)
 			abilities[i] += time;
 		}
 
+		viewportOffset = LerpPLayer(viewportOffset, position - Vector2f(APP_WIDTH/2, APP_HEIGHT/2), 0.05f);
 
-		baseSprite.setPosition(position);
+
+		baseSprite.setPosition(position - viewportOffset);
 		baseSprite.setRotation(direction.x);
 
 		baseShape.setRotation(direction.x);
-		baseShape.setPosition(position);
+		baseShape.setPosition(position - viewportOffset);
 
 		Vector2f deltaPosition;
-		deltaPosition = Vector2f(mousePos) - position;
+		deltaPosition = Vector2f(mousePos) - position + viewportOffset;
 		direction.y = float((atan2(deltaPosition.y, deltaPosition.x)) * 180 / 3.141592);
 
 		towerShape.setRotation(direction.y);
-		towerShape.setPosition(position);
+		towerShape.setPosition(position - viewportOffset);
 
 		cannonShape.setRotation(direction.y);
-		cannonShape.setPosition(position);
+		cannonShape.setPosition(position - viewportOffset);
 	}
 
 	_isAlive = health > 0;
@@ -117,3 +124,4 @@ void Player::useSkill(int skillNum)
 {
 	
 }
+

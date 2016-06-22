@@ -1,5 +1,5 @@
 #include "Level.h"
-
+#include "Player.h"
 
 Level::Level()
 {
@@ -22,4 +22,9 @@ void Level::load()
 void Level::draw(RenderTarget &target)
 {
 	target.draw(backgroundSprite);
+}
+
+void Level::update(float time)
+{
+	backgroundSprite.setPosition(Vector2f(0, 150) - Player::getInstance()->viewportOffset);
 }

@@ -35,6 +35,8 @@ public:
 
 	float abilities[3];
 
+	Vector2f viewportOffset;
+
 	Sprite baseSprite;
 	Texture baseTexture;
 

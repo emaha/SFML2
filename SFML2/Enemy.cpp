@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include <iostream>
+#include "Player.h"
 
 
 Enemy::Enemy()
@@ -51,7 +52,7 @@ Enemy::Enemy(int id, Vector2f pos, Vector2f dir)
 	cannonSize = Vector2f(60, 5);
 
 	damage = Vector2f(50, 100);
-	health = 1000;
+	baseHealth = health = 1000;
 	direction = dir;   //base, tower
 
 	baseTexture.loadFromFile("../Data/Images/tank.png", IntRect(0, 0, 50, 75));
@@ -102,20 +103,20 @@ void Enemy::update(float time)
 	if (isAlive())
 	{
 
-		baseSprite.setPosition(position);
+		baseSprite.setPosition(position - Player::getInstance()->viewportOffset);
 		baseSprite.setRotation(direction.x);
 
 		baseShape.setRotation(direction.x);
-		baseShape.setPosition(position);
+		baseShape.setPosition(position - Player::getInstance()->viewportOffset);
 
 		towerShape.setRotation(direction.y);
-		towerShape.setPosition(position);
+		towerShape.setPosition(position - Player::getInstance()->viewportOffset);
 
 		cannonShape.setRotation(direction.y);
-		cannonShape.setPosition(position);
+		cannonShape.setPosition(position - Player::getInstance()->viewportOffset);
 
-		healthBar.setPosition(position - Vector2f(50, 50));
-		healthBar.setSize(Vector2f(health <= 0 ? 0 : health / 10, 10));
+		healthBar.setPosition(position - Vector2f(50, 50) - Player::getInstance()->viewportOffset);
+		healthBar.setSize(Vector2f(health <= 0 ? 0 : health / baseHealth * 100, 10));
 
 		if (health >=700)
 			healthBar.setFillColor(Color::Green);
@@ -145,7 +146,7 @@ void Enemy::update(float time)
 
 void Enemy::updateBuff(float time)
 {
-	for (vector<Buff*>::iterator it = buffList.begin(); it != buffList.end(); ++it)
+	for (vector<Buff*>::iterator it = buffList.begin(); it != buffList.end();)
 	{
 		if ((*it)->isActive)
 		{
@@ -153,12 +154,13 @@ void Enemy::updateBuff(float time)
 			if((*it)->isReady())
 			{
 				health += (*it)->amount;
+				if (health > baseHealth) health = baseHealth;
 			}
+			++it;
 		}
 		else
 		{
 			delete *it;
-			if (buffList.size()>1)
 			it = buffList.erase(it);
 		}
 	}

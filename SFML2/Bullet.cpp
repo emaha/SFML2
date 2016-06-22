@@ -1,6 +1,7 @@
 #include "Bullet.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "Player.h"
 
 using namespace std;
 
@@ -31,8 +32,8 @@ void Bullet::init(int id, Vector2f position, Vector2f velocity)
 
 	_isAlive = true;
 
-	line[0] = Vertex(position);
-	line[1] = Vertex(position - velocity*5.0f);
+	line[0] = Vertex(position - Player::getInstance()->viewportOffset);
+	line[1] = Vertex(position - Player::getInstance()->viewportOffset - velocity*5.0f);
 
 
 	shape.setRadius(3);
@@ -48,8 +49,8 @@ void Bullet::update(float time)
 	if (isAlive())
 	{
 		position += velocity * time * speed;
-		line[0] = Vertex(position);
-		line[1] = Vertex(position + velocity*speed / 20.0f);
+		line[0] = Vertex(position - Player::getInstance()->viewportOffset);
+		line[1] = Vertex(position - Player::getInstance()->viewportOffset +  velocity*speed / 20.0f);
 
 		shape.setPosition(position);
 		sprite.setPosition(position);

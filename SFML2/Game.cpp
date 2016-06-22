@@ -61,6 +61,7 @@ void Game::run()
 
 void Game::update(float time)
 {
+	level.update(time);
 	networkClient->update(time);
 	ObjectManager::getInstance()->update(time);
 	hud.update(time);
@@ -127,7 +128,7 @@ void Game::checkEvents(RenderWindow &window, float time)
 				mousePos.x += rand() % 20 - 10;
 				
 				//пытаемся нормализовать вектор
-				Vector2f vector = Vector2f(mousePos) - Player::getInstance()->position;
+				Vector2f vector = Vector2f(mousePos) - Player::getInstance()->position + Player::getInstance()->viewportOffset;
 				float lenght = sqrt(vector.x * vector.x + vector.y * vector.y);
 				Vector2f normVelocity(vector.x / lenght, vector.y / lenght);
 

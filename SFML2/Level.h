@@ -11,6 +11,7 @@ public:
 
 	void load();
 	void draw(RenderTarget &target);
+	void update(float time);
 
 private:
 	Texture backgroundTexture, floor;
