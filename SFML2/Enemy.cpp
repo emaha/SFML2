@@ -97,37 +97,43 @@ void Enemy::update(float time)
 	Vector2f normVelocity(vector.x / lenght, vector.y / lenght);
 
 	position = Lerp(position, lerpPosition, 0.15f);
-	
+
 	_isAlive = health > 0.0f;
+
+
+	baseSprite.setPosition(position - Player::getInstance()->viewportOffset);
+	baseSprite.setRotation(direction.x);
+
+	baseShape.setRotation(direction.x);
+	baseShape.setPosition(position - Player::getInstance()->viewportOffset);
+
+	towerShape.setRotation(direction.y);
+	towerShape.setPosition(position - Player::getInstance()->viewportOffset);
+
+	cannonShape.setRotation(direction.y);
+	cannonShape.setPosition(position - Player::getInstance()->viewportOffset);
+
+	healthBar.setPosition(position - Vector2f(50, 50) - Player::getInstance()->viewportOffset);
+	healthBar.setSize(Vector2f(health <= 0 ? 0 : health / baseHealth * 100, 10));
+
+	if (health >= 700)
+		healthBar.setFillColor(Color::Green);
+	if (health < 700)
+		healthBar.setFillColor(Color::Yellow);
+	if (health < 350)
+		healthBar.setFillColor(Color::Red);
+	if (health <= 0)
+	{
+		respawnTimer -= time;
+		if (respawnTimer<0.0f)
+		{
+			respawn();
+		}
+	}
 
 	if (isAlive())
 	{
 
-		baseSprite.setPosition(position - Player::getInstance()->viewportOffset);
-		baseSprite.setRotation(direction.x);
-
-		baseShape.setRotation(direction.x);
-		baseShape.setPosition(position - Player::getInstance()->viewportOffset);
-
-		towerShape.setRotation(direction.y);
-		towerShape.setPosition(position - Player::getInstance()->viewportOffset);
-
-		cannonShape.setRotation(direction.y);
-		cannonShape.setPosition(position - Player::getInstance()->viewportOffset);
-
-		healthBar.setPosition(position - Vector2f(50, 50) - Player::getInstance()->viewportOffset);
-		healthBar.setSize(Vector2f(health <= 0 ? 0 : health / baseHealth * 100, 10));
-
-		if (health >=700)
-			healthBar.setFillColor(Color::Green);
-		if (health < 700)
-			healthBar.setFillColor(Color::Yellow);
-		if (health < 350)
-			healthBar.setFillColor(Color::Red);
-		if (health <= 0)
-		{
-			
-		}
 
 		updateBuff(time);
 
@@ -135,13 +141,13 @@ void Enemy::update(float time)
 	}
 	else
 	{
-		if (respawnTimer-time<0.0f)
+		if (respawnTimer - time < 0.0f)
 		{
 			respawn();
 		}
 	}
 
-	
+
 }
 
 void Enemy::updateBuff(float time)

@@ -1,13 +1,8 @@
 #include <iostream>
-#include <ctime>
 #include <cstdlib>
-#include <iostream>
-#include <string>
-#include <vector>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
-
 
 #include "Game.h"
 #include "Constants.h"
@@ -76,7 +71,7 @@ void Game::draw(RenderTarget &target)
 	hud.draw(window);
 }
 
-void Game::checkEvents(RenderWindow &window, float time)
+void Game::checkEvents(RenderWindow &window, float time) const
 {
 	Event event;
 	while (window.pollEvent(event))

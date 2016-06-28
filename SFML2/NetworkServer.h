@@ -1,7 +1,7 @@
 #pragma once
 
-#include <SFML\Network.hpp>
-#include <SFML\System.hpp>
+#include <SFML/Network.hpp>
+#include <SFML/System.hpp>
 #include <iostream>
 #include <list>
 

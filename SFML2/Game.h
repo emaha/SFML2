@@ -15,7 +15,7 @@ public:
 	Game();
 	~Game();
 	void run();
-	void checkEvents(RenderWindow &window, float time);
+	void checkEvents(RenderWindow &window, float time) const;
 	void update(float time);
 	void draw(RenderTarget &target);
 

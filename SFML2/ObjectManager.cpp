@@ -84,27 +84,12 @@ void ObjectManager::update(float time)
 
 	for (vector<Bullet*>::iterator it = bulletList.begin(); it != bulletList.end(); ++it)
 	{
-		if ((*it)->isAlive()){
-			(*it)->update(time);
-		}
+		(*it)->update(time);
 	}
 
 	for (map<int, Enemy*>::iterator it = enemyMap.begin(); it != enemyMap.end(); ++it)
 	{
-		Enemy* en = it->second;
-		if(en->isAlive())
-		{
-			en->update(time);
-		}
-		else
-		{
-			en->respawnTimer -= time;
-			if (en->respawnTimer<0.0f)
-			{
-				en->respawn();
-				
-			}
-		}
+		it->second->update(time);
 	}
 	checkCollision();
 }
