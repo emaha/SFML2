@@ -6,3 +6,4 @@ public:
 	~BattleText();
 };
 
+//test commit
