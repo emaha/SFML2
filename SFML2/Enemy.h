@@ -37,7 +37,7 @@ public:
 	enum{ Alive, Dead, Spawn } state;
 
 	Vector2f position, velocity, lerpPosition, baseSize, towerSize, cannonSize;
-	float baseHealth, health, respawnTimer;
+	float baseHealth, health, baseArmor, Armor, respawnTimer;
 	Color color;
 	Vector2f damage;
 	RectangleShape baseShape, towerShape, cannonShape, healthBar;

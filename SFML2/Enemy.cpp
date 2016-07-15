@@ -26,7 +26,9 @@ void Enemy::setVelocity(Vector2f vel)
 
 void Enemy::setDamage(int damage)
 {
-	health -= damage;
+	float takenDamage = damage - Armor;
+
+	health -= takenDamage < 0.0f ? 0.0f : takenDamage;   //что-бы не хилить)))
 }
 
 void Enemy::setHealth(float hp)
@@ -53,6 +55,7 @@ Enemy::Enemy(int id, Vector2f pos, Vector2f dir)
 
 	damage = Vector2f(50, 100);
 	baseHealth = health = 1000;
+	baseArmor = Armor = 0.0f;
 	direction = dir;   //base, tower
 
 	baseTexture.loadFromFile("../Data/Images/tank.png", IntRect(0, 0, 50, 75));
@@ -152,20 +155,40 @@ void Enemy::update(float time)
 
 void Enemy::updateBuff(float time)
 {
+	//Armor = baseArmor;
+
 	for (vector<Buff*>::iterator it = buffList.begin(); it != buffList.end();)
 	{
 		if ((*it)->isActive)
 		{
 			(*it)->update(time);
-			if((*it)->isReady())
+			if ((*it)->isReady())
 			{
-				health += (*it)->amount;
-				if (health > baseHealth) health = baseHealth;
+				if ((*it)->buffType == BuffType::Health)
+				{
+					cout << "Buff tick: " << (*it)->buffType << endl;
+					health += (*it)->amount;
+					if (health > baseHealth) health = baseHealth;
+				}
+
+				if ((*it)->buffType == BuffType::Armor)
+				{
+					Armor = baseArmor + (*it)->amount;
+					cout << "Buff tick: " << (*it)->buffType << "\tBase = " << baseArmor << "\tArmor = " << Armor << endl;
+				}
+
+
+
 			}
 			++it;
 		}
-		else
+		else // если баф уже не активен, удаляем.
 		{
+			if ((*it)->buffType == BuffType::Armor)
+			{
+				Armor = baseArmor;
+			}
+
 			delete *it;
 			it = buffList.erase(it);
 		}
@@ -200,5 +223,13 @@ void Enemy::draw(RenderTarget &target)
 
 void Enemy::addBuff(BuffType buffType)
 {
-	buffList.push_back(new Buff(buffType, 5.0f, 10.0f));
+	if (buffType == BuffType::Armor)
+	{
+		buffList.push_back(new Buff(buffType, 15.0f, 35.0f));
+	}
+	else
+	{
+		buffList.push_back(new Buff(buffType, 5.0f, 10.0f));
+	}
+
 }

@@ -85,7 +85,16 @@ void Game::checkEvents(RenderWindow &window, float time) const
 		}
 		case Event::KeyPressed:
 		{
-			if (Keyboard::isKeyPressed(Keyboard::E)) { cout << "E is pressed" << endl; }
+			if (Keyboard::isKeyPressed(Keyboard::E)) 
+			{
+				if (Player::getInstance()->isSkillAvailable(0))
+				{
+					Packet packet;
+					packet << Action::UseSkill << Player::getInstance()->id << Skill::ArmorHigh;
+					networkClient->sendPacket(packet);
+					cout << "Skill 2 used" << endl;
+				}
+			}
 
 			if (Keyboard::isKeyPressed(Keyboard::Q))
 			{

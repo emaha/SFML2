@@ -33,7 +33,7 @@ public:
 	Vector2f position, velocity, baseSize, towerSize, cannonSize;
 	bool _isAlive;
 
-	float abilities[3];
+	float abilities[5];
 
 	Vector2f viewportOffset;
 

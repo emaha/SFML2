@@ -6,6 +6,7 @@ Buff::~Buff(){}
 
 Buff::Buff(BuffType buffType, float buffTime, float amount)
 {
+	this->buffType = buffType;
 	this->amount = amount;
 	this->buffTime = buffTime;
 	buffTick = 0.1f;

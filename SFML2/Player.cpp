@@ -1,15 +1,12 @@
 #include "Player.h"
-#include "ObjectManager.h"
-#include "NetworkClient.h"
 #include "Constants.h"
-#include <iostream>
 #include <math.h>
 
 Player* Player::pInstance = 0;
 
 Player::Player()
 {
-	name = "CrossVoid";
+	name = "Player";
 
 	baseSize = Vector2f(60, 60);
 	towerSize = Vector2f(50, 30);
@@ -17,8 +14,13 @@ Player::Player()
 
 	_isAlive = true;
 
-	abilities[1] = 10.0f;
-	gCoolDown = 10.0f;
+	abilities[0] = 1.0f;
+	abilities[1] = 1.0f;
+	abilities[2] = 1.0f;
+	abilities[3] = 1.0f;
+	abilities[4] = 1.0f;
+
+	gCoolDown = 3.0f;
 
 	
 	damage = Vector2f(50, 100);

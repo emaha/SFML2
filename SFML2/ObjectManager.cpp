@@ -2,8 +2,6 @@
 #include "Bullet.h"
 #include "Enemy.h"
 #include "Player.h"
-#include "Constants.h"
-#include <SFML/Network.hpp>
 
 ObjectManager* ObjectManager::pInstance = 0;
 
@@ -43,7 +41,7 @@ void ObjectManager::editEnemy(int id, Vector2f pos, Vector2f vel, Vector2f dir)
 	}
 	else
 	{
-		enemyMap.insert(pair<int, Enemy*>(id, new Enemy(id, pos, dir)));
+		enemyMap[id] = new Enemy(id, pos, dir);// .insert(pair<int, Enemy*>(id, new Enemy(id, pos, dir)));
 	}
 }
 
