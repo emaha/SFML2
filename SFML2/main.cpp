@@ -1,8 +1,9 @@
 #pragma once
 #include "Game.h"
-#include "Parallax.h"
 #include "NetworkServer.h"
 #include "NetworkClient.h"
+
+bool Game::isServer;
 
 int main() {
 	srand(time(NULL));
@@ -16,11 +17,13 @@ int main() {
 	{
 		case 1:
 		{
+			Game::isServer = false;
 			Game game;	game.run();
 			break;
 		}
 		case 2:
 		{
+			Game::isServer = true;
 			NetworkServer *server = new NetworkServer();
 			break;
 		}

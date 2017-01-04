@@ -1,15 +1,11 @@
 #pragma once
 #include "NetworkServer.h"
 
-#include <string.h>
 #include "Constants.h"
 #include "ObjectManager.h"
-#include <cmath>
 #include <SFML/System.hpp>
 #include <iostream>
-#include <functional>   // std::bind
 #include <thread>
-#include <cassert>
 
 using namespace std;
 
@@ -22,7 +18,6 @@ NetworkServer::NetworkServer()
 {
 	id = 0;
 	startSever();
-
 }
 
 
@@ -35,24 +30,19 @@ void NetworkServer::startSever()
 {
 	cout << "Listening..." << endl;
 
-	ObjectManager::getInstance()->isServer = true;
-
 	thread thread(&NetworkServer::acceptLoop, this);
 	thread.detach();
 
-	float time, lastTime = 0.0f;
-
 	while (true)
 	{
-		time = clock.getElapsedTime().asMilliseconds() / 1000.0f;
+		float time = clock.getElapsedTime().asMilliseconds();
 
-		if (time - lastTime >= (1.0f / 60.0f))
+		if (time >= 1000 / 60)
 		{
-			update(time - lastTime);  //переделать!!!!!!!!!!
-			lastTime = clock.getElapsedTime().asMilliseconds()/1000.0f;
-			sleep(milliseconds(10));
+			clock.restart();
+			update(time);
 		}
-		
+		sleep(milliseconds(10));
 	}
 }
 
@@ -64,13 +54,15 @@ void NetworkServer::acceptLoop()
 
 	while (true)
 	{
+		sleep(milliseconds(10));
+		cout << "Waitint for client..." << endl;
 		socket = new TcpSocket;
 		if (listener.accept(*socket) == sf::Socket::Done)
 		{
 
 			clients.push_back(socket);
 			cout << "Connected" << endl;
-			auto t = thread(&NetworkServer::recieveLoop, this, ref(socket));
+			auto t = thread(&NetworkServer::recieveLoop, this, socket);
 			t.detach();
 		}
 
@@ -83,10 +75,11 @@ void NetworkServer::recieveLoop(TcpSocket *socket)
 	srand(time(NULL));
 	packet << Action::SetID << id++;
 	socket->send(packet);
+	bool isAlive = true;
 
-	while (true)
+	while (isAlive)
 	{
-		sleep(milliseconds(10));
+		//sleep(milliseconds(10));
 		sf::Packet packet;
 		switch (socket->receive(packet))
 		{
@@ -117,12 +110,12 @@ void NetworkServer::recieveLoop(TcpSocket *socket)
 				packet >> id >> skillNum;
 				switch (skillNum)
 				{
-					case Skill::ArmorLow:
+					case Skill::Cure:
 					{
 						ObjectManager::getInstance()->enemyMap.find(id)->second->addBuff(BuffType::Health);
 						break;
 					}
-					case Skill::ArmorHigh:
+					case Skill::ShieldWall:
 					{
 						ObjectManager::getInstance()->enemyMap.find(id)->second->addBuff(BuffType::Armor);
 						break;
@@ -130,7 +123,7 @@ void NetworkServer::recieveLoop(TcpSocket *socket)
 
 				}
 
-				
+				sendPacketToAll(packet);
 				break;
 			}
 
@@ -141,15 +134,20 @@ void NetworkServer::recieveLoop(TcpSocket *socket)
 		}
 		case sf::Socket::Disconnected:
 		{
+			isAlive = false;
 			socket->disconnect();
 			cout << "Disconnected..." << clients.size() <<  endl;
-			delete(socket);
+
+			
 			break;
 		}
 		default:
 			break;
 		}
+
 	}
+
+	delete(socket);
 }
 
 
@@ -163,7 +161,7 @@ void NetworkServer::update(float time)
 
 void NetworkServer::sendGameStateToAll(float time)
 {
-	if (sendtimer >= 0.1f)  
+	if (sendtimer >= 10)  //10 Milliseconds
 	{
 		Packet packet;
 		packet << Action::AllPlayers << ObjectManager::getInstance()->enemyMap.size(); //список всех пользователей
@@ -183,7 +181,7 @@ void NetworkServer::sendGameStateToAll(float time)
 				en->state = Enemy::Alive;
 				en->_isAlive = true;
 			}
-			
+
 			packet << en->id << en->position.x << en->position.y
 				<< en->velocity.x << en->velocity.y
 				<< en->direction.x << en->direction.y
@@ -199,10 +197,8 @@ void NetworkServer::sendGameStateToAll(float time)
 
 void NetworkServer::sendPacketToAll(Packet packet)
 {
-	for (std::list<sf::TcpSocket*>::iterator iter = clients.begin(); iter != clients.end(); ++iter)
+	for (auto iter = clients.begin(); iter != clients.end(); ++iter)
 	{
-		sf::TcpSocket& clnt = **iter;
-		
-		clnt.send(packet);
+		(*iter)->send(packet);
 	}
 }

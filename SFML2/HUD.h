@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 
 using namespace sf;
+using namespace std;
 
 class HUD
 {
@@ -11,6 +12,7 @@ public:
 
 	void update(float time);
 	void draw(RenderTarget &target);
+	void drawText(RenderTarget &target, string text, int x, int y);
 
 private:
 	Text fps;

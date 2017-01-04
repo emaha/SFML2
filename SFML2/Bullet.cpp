@@ -38,10 +38,10 @@ void Bullet::init(int id, Vector2f position, Vector2f velocity)
 
 	shape.setRadius(3);
 	shape.setFillColor(Color::Green);
-	shape.setPosition(position);
-	speed = 2000.0f;
+	shape.setPosition(position - Player::getInstance()->viewportOffset);
+	speed = 1.0f;
 
-	lifeTime = 1.5f;
+	lifeTime = 2000;
 }
 
 void Bullet::update(float time)
@@ -50,14 +50,13 @@ void Bullet::update(float time)
 	{
 		position += velocity * time * speed;
 		line[0] = Vertex(position - Player::getInstance()->viewportOffset);
-		line[1] = Vertex(position - Player::getInstance()->viewportOffset +  velocity*speed / 20.0f);
+		line[1] = Vertex(position - Player::getInstance()->viewportOffset +  velocity*speed * 20.0f);
 
-		shape.setPosition(position);
-		sprite.setPosition(position);
+		shape.setPosition(position - Player::getInstance()->viewportOffset);
+		sprite.setPosition(position - Player::getInstance()->viewportOffset);
 		if (lifeTime < 0.0f)
 		{
 			kill();
-			//cout << "Bullet kill" << endl;
 		}
 		lifeTime -= time;
 	}
@@ -68,7 +67,7 @@ void Bullet::draw(RenderTarget &target)
 	
 	if (isAlive())
 	{
-		//target.draw(shape);
+		target.draw(shape);
 		target.draw(line, 2, Lines);
 	}
 }

@@ -28,7 +28,7 @@ void Game::createWindow()
 
 	window.create(sf::VideoMode(APP_WIDTH, APP_HEIGHT), APP_TITLE, sf::Style::Default);
 	window.setKeyRepeatEnabled(true);
-	window.setFramerateLimit(APP_FPS); 
+	//window.setFramerateLimit(APP_FPS); 
 }
 
 
@@ -37,20 +37,23 @@ void Game::run()
 	createWindow();
 	Clock clock;
 	networkClient->doConnect();
+	
 
 	while (window.isOpen())
 	{
 		float time = clock.getElapsedTime().asMilliseconds();
-		clock.restart();
-		time /= 1000;
+		
+		if (time >= 1000 / 60)
+		{
+			clock.restart();
+			window.clear();
 
-		window.clear();
-
-		checkEvents(window, time);
-		update(time);
-		draw(window);
-
-		window.display();
+			//time /= 1000.0f;
+			checkEvents(window, time);
+			update(time);
+			draw(window);
+			window.display();
+		}
 	}
 }
 
@@ -81,29 +84,31 @@ void Game::checkEvents(RenderWindow &window, float time) const
 		case Event::Closed:
 		{
 			window.close();
+			networkClient->socket->disconnect();
 			break;
 		}
 		case Event::KeyPressed:
 		{
-			if (Keyboard::isKeyPressed(Keyboard::E)) 
+			if (Keyboard::isKeyPressed(Keyboard::Num1)) 
 			{
 				if (Player::getInstance()->isSkillAvailable(0))
 				{
 					Packet packet;
-					packet << Action::UseSkill << Player::getInstance()->id << Skill::ArmorHigh;
+					packet << Action::UseSkill << Player::getInstance()->id << Skill::ShieldWall;
 					networkClient->sendPacket(packet);
-					cout << "Skill 2 used" << endl;
+					cout << "Skill 1 used" << endl;
+
 				}
 			}
 
-			if (Keyboard::isKeyPressed(Keyboard::Q))
+			if (Keyboard::isKeyPressed(Keyboard::Num2))
 			{
 				if (Player::getInstance()->isSkillAvailable(1))
 				{
 					Packet packet;
-					packet << Action::UseSkill << Player::getInstance()->id << Skill::ArmorLow;
+					packet << Action::UseSkill << Player::getInstance()->id << Skill::Cure;
 					networkClient->sendPacket(packet);
-					cout << "Skill 1 used" << endl;
+					cout << "Skill 2 used" << endl;
 				}
 			}
 
@@ -144,24 +149,25 @@ void Game::checkEvents(RenderWindow &window, float time) const
 				networkClient->sendPacket(packet);
 			}
 		}
+		
 		if (Keyboard::isKeyPressed(Keyboard::W)) { Player::getInstance()->position.y -= Player::getInstance()->speed * time; }
 		if (Keyboard::isKeyPressed(Keyboard::S)) { Player::getInstance()->position.y += Player::getInstance()->speed * time; }
 		if (Keyboard::isKeyPressed(Keyboard::A)) { Player::getInstance()->position.x -= Player::getInstance()->speed * time; }
 		if (Keyboard::isKeyPressed(Keyboard::D)) { Player::getInstance()->position.x += Player::getInstance()->speed * time; }
 		
-		/*
-		if (Keyboard::isKeyPressed(Keyboard::A)) { Player::getInstance()->direction.x -= 100.0f * time; }
-		if (Keyboard::isKeyPressed(Keyboard::D)) { Player::getInstance()->direction.x += 100.0f * time; }
+		/* //  управление как на танке
+		if (Keyboard::isKeyPressed(Keyboard::A)) { Player::getInstance()->direction.x -= 0.1f * time; }
+		if (Keyboard::isKeyPressed(Keyboard::D)) { Player::getInstance()->direction.x += 0.1f * time; }
 		if (Keyboard::isKeyPressed(Keyboard::W))
 		{
 			Vector2f forwardVector(sin(Player::getInstance()->direction.x * DEG2RAD), -cos(Player::getInstance()->direction.x * DEG2RAD));
-			Player::getInstance()->position += forwardVector * 200.0f * time;
+			Player::getInstance()->position += forwardVector * 0.2f * time;
 		}
 
 		if (Keyboard::isKeyPressed(Keyboard::S))
 		{
 			Vector2f forwardVector(sin(Player::getInstance()->direction.x * DEG2RAD), -cos(Player::getInstance()->direction.x * DEG2RAD));
-			Player::getInstance()->position -= forwardVector * 200.0f * time;
+			Player::getInstance()->position -= forwardVector * 0.2f * time;
 		}
 		*/
 	} 

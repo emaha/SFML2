@@ -1,5 +1,5 @@
 #pragma once
-#define APP_FPS 60
+#define APP_FPS 900
 #define APP_WIDTH 1024
 #define APP_HEIGHT 768
 #define APP_TITLE "LittleBattle"
@@ -9,7 +9,7 @@ enum Action
 {Move=0, Shot, MainMenu, Pause, TakeDamage, UseSkill, SetEffect, AllPlayers, AllBullets, Kill, SpawnPlayer, SpawnMonster, SetID};
 
 enum Skill
-{ArmorLow=0, ArmorMiddle, ArmorHigh};
+{	ShieldWall=0, Cure, Runner, Quad, Melee};
 
 enum BuffType
 {

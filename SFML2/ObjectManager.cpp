@@ -1,7 +1,9 @@
+#pragma once
 #include "ObjectManager.h"
 #include "Bullet.h"
 #include "Enemy.h"
 #include "Player.h"
+#include "Game.h"
 
 ObjectManager* ObjectManager::pInstance = 0;
 
@@ -111,6 +113,12 @@ void ObjectManager::draw(RenderTarget &target)
 	}
 }
 
+
+float ObjectManager::getDistance(Vector2f a, Vector2f b)
+{
+	return sqrtf(pow((b.x - a.x), 2) + pow((b.y - a.y), 2));
+}
+
 bool ObjectManager::isCollide(Vector2f a, Vector2f b)
 {
 	if (getDistance(a, b) < 35.0f)
@@ -124,6 +132,7 @@ bool ObjectManager::isCollide(Vector2f a, Vector2f b)
 void ObjectManager::checkCollision()
 {
 	//Столкновения игрока с пулей
+	
 	for (map<int, Enemy*>::iterator enemy_it = enemyMap.begin(); enemy_it != enemyMap.end(); ++ enemy_it)
 	{
 		for (vector<Bullet*>::iterator bullet_it = bulletList.begin(); bullet_it != bulletList.end(); ++bullet_it)
@@ -132,7 +141,7 @@ void ObjectManager::checkCollision()
 			{
 				if (isCollide(enemy_it->second->position, (*bullet_it)->position))
 				{
-					if (isServer)
+					if (Game::isServer)
 					{
 						enemy_it->second->setDamage(rand() % 20 + 20);   // 20-40
 					}
@@ -141,7 +150,7 @@ void ObjectManager::checkCollision()
 			}
 		}
 	}
-
+	
 
 
 
@@ -153,7 +162,4 @@ void ObjectManager::reSpawnPlayer()
 	
 }
 
-float ObjectManager::getDistance(Vector2f a, Vector2f b)
-{
-	return sqrtf(pow((b.x - a.x), 2) + pow((b.y - a.y), 2));
-}
+

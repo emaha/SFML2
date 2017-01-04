@@ -21,13 +21,15 @@ public:
 
 	HUD hud;
 	Level level;
-
 	NetworkClient *networkClient;
+
+	static bool isServer;
 
 private:
 	void createWindow();
 	RenderWindow window;
 	bool running;
+	
 
 	Mutex mutex;
 

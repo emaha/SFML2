@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include <iostream>
 #include "Player.h"
+#include "Game.h"
 
 
 Enemy::Enemy()
@@ -43,7 +44,7 @@ Enemy::Enemy(int id, Vector2f pos, Vector2f dir)
 	this->position = pos;
 
 	_isAlive = true;
-	respawnTimer = 3.0f;
+	respawnTimer = 3000;
 	state = Alive;
 
 	position = Vector2f(100, 150);
@@ -127,36 +128,22 @@ void Enemy::update(float time)
 		healthBar.setFillColor(Color::Red);
 	if (health <= 0)
 	{
+		cout << respawnTimer << endl;
 		respawnTimer -= time;
-		if (respawnTimer<0.0f)
+		if (respawnTimer < 0.0f)
 		{
+
 			respawn();
 		}
+		return;
 	}
 
-	if (isAlive())
-	{
-
-
-		updateBuff(time);
-
-
-	}
-	else
-	{
-		if (respawnTimer - time < 0.0f)
-		{
-			respawn();
-		}
-	}
-
-
+	updateBuff(time);
 }
 
 void Enemy::updateBuff(float time)
 {
-	//Armor = baseArmor;
-
+	
 	for (vector<Buff*>::iterator it = buffList.begin(); it != buffList.end();)
 	{
 		if ((*it)->isActive)
@@ -166,9 +153,12 @@ void Enemy::updateBuff(float time)
 			{
 				if ((*it)->buffType == BuffType::Health)
 				{
-					cout << "Buff tick: " << (*it)->buffType << endl;
-					health += (*it)->amount;
-					if (health > baseHealth) health = baseHealth;
+					if (Game::isServer)
+					{
+						cout << "Buff tick: " << (*it)->buffType << endl;
+						health += (*it)->amount;
+						if (health > baseHealth) health = baseHealth;
+					}
 				}
 
 				if ((*it)->buffType == BuffType::Armor)
@@ -199,8 +189,8 @@ void Enemy::updateBuff(float time)
 void Enemy::respawn()
 {
 	//cout << id << " " << "respawn" << endl;
-	respawnTimer = 3.0f;
-	health = 1000.0f;
+	respawnTimer = 3000;
+	health = 1000;
 	state = Spawn;
 	_isAlive = true;
 }
@@ -208,7 +198,7 @@ void Enemy::respawn()
 
 void Enemy::init()
 {
-	health = 100;
+	health = 1000;
 	position = Vector2f(rand() % 1000, rand() % 1000);
 }
 
@@ -219,17 +209,50 @@ void Enemy::draw(RenderTarget &target)
 	target.draw(towerShape);
 	target.draw(cannonShape);
 	target.draw(healthBar);
+
+	int buffCnt = 0;
+	for (vector<Buff*>::iterator it = buffList.begin(); it != buffList.end(); ++it)
+	{
+		RectangleShape sh;
+		if ((*it)->buffType == BuffType::Health)
+		{
+			sh.setFillColor(Color(0, 250, 0));
+		}
+		else
+		{
+			sh.setFillColor(Color(250, 0, 0));
+		}
+		sh.setSize(Vector2f(10, 10));
+		sh.setPosition(position - Player::getInstance()->viewportOffset + Vector2f(-50 + buffCnt * 12, 35));
+		target.draw(sh);
+		
+		
+		buffCnt++;
+	}
+
 }
 
 void Enemy::addBuff(BuffType buffType)
 {
-	if (buffType == BuffType::Armor)
+	Mutex mutex;
+	Lock lock(mutex);
+	float time, amount;
+
+	switch (buffType)
 	{
-		buffList.push_back(new Buff(buffType, 15.0f, 35.0f));
-	}
-	else
-	{
-		buffList.push_back(new Buff(buffType, 5.0f, 10.0f));
+	case BuffType::Armor:
+		time = 10000;
+		amount = 30;
+		break;
+
+	case BuffType::Health:
+		time = 5000;
+		amount = 5;
+		break;
+
+	default:
+		break;
 	}
 
+	buffList.push_back(new Buff(buffType, time, amount));
 }

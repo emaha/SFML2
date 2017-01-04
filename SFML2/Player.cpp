@@ -27,7 +27,7 @@ Player::Player()
 	position = Vector2f(500, 500);
 	velocity = Vector2f(0, 0);
 	health = 1000.0f;
-	speed = 200.0f;
+	speed = 0.2f;
 	shotTime = 0.0f;
 	direction = Vector2f(0, 0);   //base, tower
 
@@ -53,7 +53,7 @@ Player::~Player()
 {
 }
 
-Vector2f LerpPLayer(Vector2f v0, Vector2f v1, float t)
+Vector2f LerpPlayer(Vector2f v0, Vector2f v1, float t)
 {
 	return (1 - t)*v0 + t*v1;
 }
@@ -71,7 +71,7 @@ void Player::Update(float time, Vector2i mousePos)
 			abilities[i] += time;
 		}
 
-		viewportOffset = LerpPLayer(viewportOffset, position - Vector2f(APP_WIDTH/2, APP_HEIGHT/2), 0.05f);
+		viewportOffset = LerpPlayer(viewportOffset, position - Vector2f(APP_WIDTH/2, APP_HEIGHT/2), 0.05f);
 
 
 		baseSprite.setPosition(position - viewportOffset);
@@ -104,7 +104,7 @@ void Player::Draw(RenderTarget &target)
 
 bool Player::isFire()
 {
-	if (shotTime > 0.1f && isAlive()){
+	if (shotTime > 100 && isAlive()){
 		shotTime = 0;
 		return true;
 	}
@@ -113,7 +113,7 @@ bool Player::isFire()
 
 bool Player::isSkillAvailable(int i)
 {
-	if (gCoolDown > 0.5f && isAlive() && abilities[i]>5.0f){
+	if (gCoolDown > 500 && isAlive() && abilities[i]>5000){
 		
 		abilities[i] = 0.0f;
 		gCoolDown = 0.0f;
