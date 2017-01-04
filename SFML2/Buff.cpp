@@ -9,19 +9,19 @@ Buff::Buff(BuffType buffType, float buffTime, float amount)
 	this->buffType = buffType;
 	this->amount = amount;
 	this->buffTime = buffTime;
-	buffTick = 0.1f;
+	buffTick = 100;
 }
 
 void Buff::update(float time)
 {
-	isActive = buffTime >= .0f;
+	isActive = buffTime >= 0;
 	if (isActive)
 	{
-		if (buffTick<=0.0f)
+		if (buffTick<=0)
 		{
 			
 
-			buffTick = 0.1f;
+			buffTick = 100;
 		}
 		
 
@@ -32,7 +32,7 @@ void Buff::update(float time)
 
 bool Buff::isReady()
 {
-	if (buffTime > .0f && buffTick<0.0f)
+	if (buffTime > 0 && buffTick<0)
 	{
 		return true;
 	}
